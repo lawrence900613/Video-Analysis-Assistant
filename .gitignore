@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+env/
+*.egg-info/
+
+# Env & secrets
+.env
+backend/.env
+
+# Downloads (temp)
+backend/downloads/
+downloads/
+
+# Node / frontend
+node_modules/
+frontend/node_modules/
+frontend/dist/
+dist/
+
+# Editor / OS
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# misc
+env_check.txt

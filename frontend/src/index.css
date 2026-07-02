@@ -1,0 +1,39 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  @apply bg-slate-50 text-slate-800 antialiased;
+  background-image:
+    radial-gradient(60% 50% at 50% 0%, rgba(99, 102, 241, 0.12), transparent 70%),
+    radial-gradient(40% 40% at 90% 10%, rgba(217, 70, 239, 0.1), transparent 70%);
+  background-attachment: fixed;
+}
+
+@layer components {
+  .brand-gradient {
+    @apply bg-gradient-to-r from-indigo-500 via-violet-500 to-fuchsia-500;
+  }
+  .brand-text {
+    @apply bg-gradient-to-r from-indigo-600 via-violet-600 to-fuchsia-600 bg-clip-text text-transparent;
+  }
+  .card {
+    @apply rounded-2xl bg-white shadow-sm ring-1 ring-slate-100 transition duration-300;
+  }
+}
+
+/* 自定义滚动条 */
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-thumb {
+  @apply rounded-full bg-slate-300;
+}
