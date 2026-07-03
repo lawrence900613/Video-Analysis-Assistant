@@ -26,17 +26,6 @@
 
 ---
 
-## Product Preview
-
-### Homepage
-
-Paste a URL, choose quality, and open the AI workspace from a single page. Toggle **Switch theme** in the navbar for light or dark mode.
-
-| Light mode | Dark mode |
-| --- | --- |
-| ![Homepage in light mode](docs/assets/readme/home-light.png) | ![Homepage in dark mode](docs/assets/readme/home-dark.png) |
-
----
 
 ## Core Features
 
@@ -46,19 +35,13 @@ Parse returns title, uploader, duration, thumbnail, subtitle tracks, and selecta
 
 **Example — YouTube** (`https://www.youtube.com/watch?v=fWjsdhR3z3c`)
 
-| Light mode | Dark mode |
+| Parsing | Dowloading |
 | --- | --- |
-| ![YouTube parse result in light mode](docs/assets/readme/youtube-parse-light.png) | ![YouTube parse result in dark mode](docs/assets/readme/youtube-parse-dark.png) |
+| ![YouTube parse result in light mode](docs/assets/readme/youtube-parse-light.png) | <img width="1102" height="578" alt="image" src="https://github.com/user-attachments/assets/7ae16216-5be3-4de7-ac35-42f0bb4107b4" /> |
 
-**Example — Bilibili** (`https://www.bilibili.com/video/BV1E7wtzaEdq/`)
 
-| Light mode | Dark mode |
-| --- | --- |
-| ![Bilibili parse result in light mode](docs/assets/readme/bilibili-parse-light.png) | ![Bilibili parse result in dark mode](docs/assets/readme/bilibili-parse-dark.png) |
 
-When Bilibili does not expose public subtitle tracks, the UI explains the limitation and points to optional cookie configuration:
 
-![Bilibili subtitle limitation notice](docs/assets/readme/bilibili-limitation.png)
 
 ---
 
@@ -72,25 +55,28 @@ Screenshots below use the YouTube example above, captured from the local app.
 
 Streaming SSE output compresses long videos into structured notes.
 
-![AI summary tab](docs/assets/readme/youtube-summary.png)
+<img width="1562" height="1018" alt="image" src="https://github.com/user-attachments/assets/ef008d1f-777f-4391-92d8-e7c5c5642394" />
+
 
 #### Transcript — timestamped cues and search
 
 Fetch subtitle cues, search inline, export SRT, or translate through the LLM.
 
-![Transcript tab](docs/assets/readme/youtube-transcript.png)
+<img width="1103" height="720" alt="image" src="https://github.com/user-attachments/assets/95836954-f0d8-4a0e-b873-26c8b6c36e14" />
+
 
 #### Mind map — hierarchical knowledge view
 
 Transcript and summary content is turned into an interactive markmap-style diagram.
 
-![Mind map tab](docs/assets/readme/youtube-mindmap.png)
+<img width="1106" height="770" alt="image" src="https://github.com/user-attachments/assets/049e6b52-79ce-494c-83e3-39dc0ceee2f4" />
 
 #### Q&A — multi-turn chat with citations
 
 Ask follow-up questions against the transcript and summary. The screenshot below is from the same YouTube workflow (reference capture from local testing).
 
-![Q&A tab](docs/assets/readme/youtube-qa.png)
+<img width="1086" height="780" alt="image" src="https://github.com/user-attachments/assets/606fc3ac-355c-4045-b685-c10c758a6a44" />
+
 
 ---
 
