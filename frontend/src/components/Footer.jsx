@@ -4,7 +4,7 @@ export default function Footer() {
   const { t } = useI18n();
 
   return (
-    <footer id="faq" className="mt-24 border-t border-slate-100 bg-white/60">
+    <footer className="mt-24 border-t border-slate-100 bg-white/60">
       <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
         <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
           <div>
@@ -17,9 +17,9 @@ export default function Footer() {
             <p className="mt-3 max-w-xs text-sm text-slate-500">{t("footer.brand_desc")}</p>
           </div>
 
-          <FooterCol title={t("footer.col_faq")} items={t("footer.faq_items")} />
-          <FooterCol title={t("footer.col_features")} items={t("footer.feature_items")} />
-          <FooterCol title={t("footer.col_about")} items={t("footer.about_items")} />
+          <FooterCol title={t("footer.col_features")} items={t("footer.feature_items")} href="#features" />
+          <FooterCol title={t("footer.col_faq")} items={t("footer.faq_items")} href="#faq" />
+          <FooterCol title={t("footer.col_about")} items={t("footer.about_items")} href="#pricing" />
         </div>
 
         <div className="mt-10 border-t border-slate-100 pt-6 text-center text-xs text-slate-400">
@@ -31,14 +31,14 @@ export default function Footer() {
   );
 }
 
-function FooterCol({ title, items }) {
+function FooterCol({ title, items, href }) {
   return (
     <div>
       <h4 className="text-sm font-bold text-slate-700">{title}</h4>
       <ul className="mt-3 space-y-2">
         {items.map((it) => (
           <li key={it}>
-            <a href="#" className="text-sm text-slate-500 transition hover:text-indigo-600">{it}</a>
+            <a href={href} className="text-sm text-slate-500 transition hover:text-indigo-600">{it}</a>
           </li>
         ))}
       </ul>

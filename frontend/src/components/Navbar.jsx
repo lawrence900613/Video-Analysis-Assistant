@@ -1,12 +1,15 @@
+import { useState } from "react";
 import { useI18n } from "../i18n.jsx";
 
 export default function Navbar() {
   const { t, toggle } = useI18n();
+  const [menuOpen, setMenuOpen] = useState(false);
 
   const links = [
     { label: t("nav.home"), href: "#home" },
     { label: t("nav.platforms"), href: "#platforms" },
     { label: t("nav.features"), href: "#features" },
+    { label: t("nav.history"), href: "#history" },
     { label: t("nav.faq"), href: "#faq" },
   ];
 
@@ -24,7 +27,7 @@ export default function Navbar() {
           </span>
         </a>
 
-        <div className="hidden items-center gap-8 md:flex">
+        <div className="hidden items-center gap-6 lg:flex">
           {links.map((l) => (
             <a
               key={l.href}
@@ -39,23 +42,59 @@ export default function Navbar() {
         <div className="flex items-center gap-2 sm:gap-3">
           <button
             onClick={toggle}
-            aria-label="切换语言 / Switch language"
+            aria-label="Switch language"
             className="flex items-center gap-1.5 rounded-full border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-600 transition hover:border-indigo-300 hover:text-indigo-600"
           >
             <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2">
               <circle cx="12" cy="12" r="9" />
               <path strokeLinecap="round" d="M3 12h18M12 3c2.5 2.7 2.5 15.3 0 18M12 3c-2.5 2.7-2.5 15.3 0 18" />
             </svg>
-            {t("lang_switch")}
+            <span className="hidden xs:inline">{t("lang_switch")}</span>
           </button>
           <a
             href="#pricing"
-            className="brand-gradient rounded-full px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-indigo-200 transition hover:scale-105 hover:shadow-indigo-300 sm:px-5"
+            className="hidden brand-gradient rounded-full px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-indigo-200 transition hover:scale-105 sm:inline-flex"
+          >
+            {t("nav.pro")}
+          </a>
+          <button
+            type="button"
+            onClick={() => setMenuOpen((o) => !o)}
+            aria-label="Menu"
+            className="rounded-lg p-2 text-slate-600 transition hover:bg-slate-100 lg:hidden"
+          >
+            <svg viewBox="0 0 24 24" className="h-6 w-6" fill="none" stroke="currentColor" strokeWidth="2">
+              {menuOpen ? (
+                <path strokeLinecap="round" d="M6 18L18 6M6 6l12 12" />
+              ) : (
+                <path strokeLinecap="round" d="M4 6h16M4 12h16M4 18h16" />
+              )}
+            </svg>
+          </button>
+        </div>
+      </nav>
+
+      {menuOpen && (
+        <div className="border-t border-slate-100 bg-white px-4 py-3 lg:hidden">
+          {links.map((l) => (
+            <a
+              key={l.href}
+              href={l.href}
+              onClick={() => setMenuOpen(false)}
+              className="block rounded-lg px-3 py-2.5 text-sm font-medium text-slate-700 hover:bg-indigo-50 hover:text-indigo-600"
+            >
+              {l.label}
+            </a>
+          ))}
+          <a
+            href="#pricing"
+            onClick={() => setMenuOpen(false)}
+            className="mt-2 block rounded-xl brand-gradient px-3 py-2.5 text-center text-sm font-semibold text-white"
           >
             {t("nav.pro")}
           </a>
         </div>
-      </nav>
+      )}
     </header>
   );
 }

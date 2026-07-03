@@ -7,7 +7,7 @@ async function postJSON(path, body) {
     body: JSON.stringify(body),
   });
   if (!res.ok) {
-    let detail = `请求失败 (${res.status})`;
+    let detail = `Request failed (${res.status})`;
     try {
       const data = await res.json();
       if (data.detail) detail = data.detail;
@@ -19,29 +19,16 @@ async function postJSON(path, body) {
   return res;
 }
 
-export async function parseVideo(url) {
-  const res = await postJSON("/parse", { url });
-  return res.json();
+function triggerBrowserDownload(url) {
+  const a = document.createElement("a");
+  a.href = url;
+  a.style.display = "none";
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
 }
 
-export async function summarizeVideo(url) {
-  const res = await postJSON("/summary", { url });
-  return res.json();
-}
-
-export function downloadUrl() {
-  return BASE + "/download";
-}
-
-/** 下载视频：通过 fetch 拿到 blob 再触发浏览器保存，便于展示进度/错误。 */
-export async function downloadVideo(url, formatId, onFilename) {
-  const res = await postJSON("/download", { url, format_id: formatId });
-  const disposition = res.headers.get("Content-Disposition") || "";
-  let filename = "video";
-  const match = disposition.match(/filename="?([^"]+)"?/);
-  if (match) filename = decodeURIComponent(match[1]);
-  if (onFilename) onFilename(filename);
-  const blob = await res.blob();
+function triggerDownload(blob, filename) {
   const objectUrl = window.URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = objectUrl;
@@ -49,26 +36,168 @@ export async function downloadVideo(url, formatId, onFilename) {
   document.body.appendChild(a);
   a.click();
   a.remove();
-  window.URL.revokeObjectURL(objectUrl);
+  // Chrome/Edge write blob downloads as {uuid}.tmp; revoking too early orphans them.
+  window.setTimeout(() => window.URL.revokeObjectURL(objectUrl), 60_000);
 }
 
-/** 翻译字幕：返回 SRT 文本并触发下载。 */
-export async function translateSubtitle(url, targetLang) {
-  const res = await postJSON("/translate", { url, target_lang: targetLang });
+function sleep(ms, signal) {
+  return new Promise((resolve, reject) => {
+    if (signal?.aborted) {
+      reject(new DOMException("Aborted", "AbortError"));
+      return;
+    }
+    const timer = window.setTimeout(resolve, ms);
+    signal?.addEventListener(
+      "abort",
+      () => {
+        window.clearTimeout(timer);
+        reject(new DOMException("Aborted", "AbortError"));
+      },
+      { once: true },
+    );
+  });
+}
+
+export class DownloadCancelledError extends Error {
+  constructor(message = "Download cancelled") {
+    super(message);
+    this.name = "DownloadCancelledError";
+  }
+}
+
+export async function parseVideo(url) {
+  const res = await postJSON("/parse", { url });
+  return res.json();
+}
+
+export async function summarizeVideo(url, outputLang = "English") {
+  const res = await postJSON("/summary", { url, output_lang: outputLang });
+  return res.json();
+}
+
+export function downloadUrl() {
+  return BASE + "/download";
+}
+
+export async function cancelDownload(jobId) {
+  const res = await fetch(`${BASE}/download/${jobId}/cancel`, { method: "POST" });
+  if (!res.ok) {
+    let detail = `Cancel failed (${res.status})`;
+    try {
+      const data = await res.json();
+      if (data.detail) detail = data.detail;
+    } catch {
+      /* ignore */
+    }
+    throw new Error(detail);
+  }
+  return res.json();
+}
+
+/** Download video with optional progress callback. Supports cancellation via signal. */
+export async function downloadVideo(url, formatId, { onProgress, onFilename, signal } = {}) {
+  const startRes = await postJSON("/download/start", { url, format_id: formatId });
+  const { job_id: jobId } = await startRes.json();
+
+  if (signal?.aborted) {
+    await cancelDownload(jobId).catch(() => {});
+    throw new DownloadCancelledError();
+  }
+
+  let filename = "video.mp4";
+  try {
+    while (true) {
+      if (signal?.aborted) {
+        await cancelDownload(jobId).catch(() => {});
+        throw new DownloadCancelledError();
+      }
+
+      const progRes = await fetch(`${BASE}/download/${jobId}/progress`, { signal });
+      if (!progRes.ok) {
+        let detail = `Progress check failed (${progRes.status})`;
+        try {
+          const data = await progRes.json();
+          if (data.detail) detail = data.detail;
+        } catch {
+          /* ignore */
+        }
+        throw new Error(detail);
+      }
+
+      const prog = await progRes.json();
+      if (prog.cancelled || prog.stage === "cancelled") {
+        throw new DownloadCancelledError();
+      }
+      if (onProgress) {
+        onProgress({
+          stage: prog.stage,
+          percent: prog.percent,
+          speed_bps: prog.speed_bps ?? null,
+          eta_seconds: prog.eta_seconds ?? null,
+        });
+      }
+      if (prog.error) throw new Error(prog.error);
+      if (prog.ready) {
+        filename = prog.filename || filename;
+        break;
+      }
+      await sleep(400, signal);
+    }
+  } catch (e) {
+    if (e instanceof DownloadCancelledError) throw e;
+    if (e?.name === "AbortError" || signal?.aborted) {
+      await cancelDownload(jobId).catch(() => {});
+      throw new DownloadCancelledError();
+    }
+    throw e;
+  }
+
+  if (signal?.aborted) {
+    await cancelDownload(jobId).catch(() => {});
+    throw new DownloadCancelledError();
+  }
+
+  if (onFilename) onFilename(filename);
+  if (onProgress) {
+    onProgress({
+      stage: "transferring",
+      percent: null,
+      speed_bps: null,
+      eta_seconds: null,
+    });
+  }
+
+  // Let the browser save via Content-Disposition instead of fetch→blob→objectURL,
+  // which leaves orphaned {uuid}.tmp files in Downloads on Chrome/Edge (Windows).
+  triggerBrowserDownload(`${BASE}/download/${jobId}/file`);
+  return filename;
+}
+
+/** Download original subtitles as SRT. */
+export async function downloadSubtitles(url, preferLang) {
+  const body = { url };
+  if (preferLang) body.prefer_lang = preferLang;
+  const res = await postJSON("/subtitles", body);
   const text = await res.text();
-  const blob = new Blob([text], { type: "application/x-subrip" });
-  const objectUrl = window.URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = objectUrl;
-  a.download = "subtitle.srt";
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-  window.URL.revokeObjectURL(objectUrl);
+  const lang = res.headers.get("X-Subtitle-Lang") || preferLang || "sub";
+  triggerDownload(new Blob([text], { type: "application/x-subrip" }), `subtitle_${lang}.srt`);
+  return { lang, isAuto: res.headers.get("X-Subtitle-Auto") === "1" };
+}
+
+/** Translate subtitles: return SRT text and trigger download. */
+export async function translateSubtitle(url, targetLang, preferLang) {
+  const body = { url, target_lang: targetLang };
+  if (preferLang) body.prefer_lang = preferLang;
+  const res = await postJSON("/translate", body);
+  const text = await res.text();
+  triggerDownload(new Blob([text], { type: "application/x-subrip" }), "subtitle.srt");
   return text;
 }
 
 export async function health() {
   const res = await fetch(BASE + "/health");
+  if (!res.ok) {
+    throw new Error(`Health check failed (${res.status})`);
+  }
   return res.json();
 }

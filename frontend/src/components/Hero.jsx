@@ -1,9 +1,10 @@
 import { useI18n } from "../i18n.jsx";
 
-const PLATFORMS = ["YouTube", "哔哩哔哩", "抖音", "Threads", "TikTok", "X / Twitter", "Instagram"];
+const PLATFORMS = ["YouTube", "Bilibili", "Douyin", "Twitch", "TikTok", "X / Twitter", "Instagram"];
 
-export default function Hero({ url, setUrl, onParse, loading, error }) {
+export default function Hero({ url, setUrl, onParse, loading, error, flowStep = 1 }) {
   const { t } = useI18n();
+  const steps = t("hero.steps");
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -35,15 +36,15 @@ export default function Hero({ url, setUrl, onParse, loading, error }) {
 
         <form
           onSubmit={handleSubmit}
-          className="mx-auto mt-8 flex max-w-2xl animate-fade-up flex-col gap-3 sm:flex-row sm:items-center sm:gap-2 sm:rounded-full sm:bg-white sm:p-2 sm:shadow-xl sm:shadow-indigo-100 sm:ring-1 sm:ring-slate-100"
+          className="search-box mx-auto mt-8 flex max-w-2xl animate-fade-up flex-col gap-3 sm:flex-row sm:items-center sm:gap-0"
         >
-          <div className="flex flex-1 items-center gap-2 rounded-full bg-white px-4 py-3 shadow-lg ring-1 ring-slate-100 sm:shadow-none sm:ring-0">
+          <div className="flex flex-1 items-center gap-2 px-4 py-3 sm:py-0">
             <svg viewBox="0 0 24 24" className="h-5 w-5 shrink-0 text-slate-400" fill="none" stroke="currentColor" strokeWidth="2">
               <path strokeLinecap="round" strokeLinejoin="round" d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757" />
               <path strokeLinecap="round" strokeLinejoin="round" d="M10.81 15.312a4.5 4.5 0 01-1.242-7.244l4.5-4.5a4.5 4.5 0 016.364 6.364l-1.757 1.757" />
             </svg>
             <input
-              type="text"
+              type="url"
               value={url}
               onChange={(e) => setUrl(e.target.value)}
               placeholder={t("hero.placeholder")}
@@ -53,7 +54,7 @@ export default function Hero({ url, setUrl, onParse, loading, error }) {
           <button
             type="submit"
             disabled={loading}
-            className="brand-gradient flex items-center justify-center gap-2 rounded-full px-8 py-3 text-sm font-semibold text-white shadow-lg shadow-indigo-200 transition hover:scale-[1.03] disabled:cursor-not-allowed disabled:opacity-70"
+            className="brand-gradient mx-2 mb-2 flex items-center justify-center gap-2 rounded-xl px-8 py-3 text-sm font-semibold text-white shadow-lg shadow-indigo-200 transition hover:scale-[1.02] disabled:cursor-not-allowed disabled:opacity-70 sm:mb-0 sm:rounded-lg sm:px-6 sm:py-2.5"
           >
             {loading ? (
               <>
@@ -70,6 +71,27 @@ export default function Hero({ url, setUrl, onParse, loading, error }) {
             {error}
           </p>
         )}
+
+        {/* Flow steps */}
+        <div className="mx-auto mt-8 flex max-w-2xl flex-wrap items-center justify-center gap-2 animate-fade-up">
+          {steps.map((step, i) => (
+            <div key={step} className="flex items-center gap-2">
+              <span
+                className={`flex h-7 w-7 items-center justify-center rounded-full text-xs font-bold ${
+                  i < flowStep ? "brand-gradient text-white" : "bg-white text-slate-500 ring-1 ring-slate-200"
+                }`}
+              >
+                {i + 1}
+              </span>
+              <span className="text-xs font-medium text-slate-500">{step}</span>
+              {i < steps.length - 1 && (
+                <svg viewBox="0 0 24 24" className="mx-1 hidden h-4 w-4 text-slate-300 sm:block" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path strokeLinecap="round" d="M9 5l7 7-7 7" />
+                </svg>
+              )}
+            </div>
+          ))}
+        </div>
 
         <div className="mt-6 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-xs text-slate-400">
           {PLATFORMS.map((p) => (
