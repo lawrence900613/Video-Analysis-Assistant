@@ -9,7 +9,7 @@ from urllib.parse import quote
 
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse, JSONResponse, PlainTextResponse
+from fastapi.responses import FileResponse, JSONResponse, PlainTextResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 from starlette.background import BackgroundTask
@@ -17,6 +17,8 @@ from starlette.background import BackgroundTask
 from . import ai, downloader
 from .config import get_settings
 from . import download_jobs
+from . import summarize_service
+from .routes import chat_sse, mindmap
 from .downloader import normalize_url
 
 settings = get_settings()
@@ -29,6 +31,9 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+app.include_router(mindmap.router)
+app.include_router(chat_sse.router)
 
 
 @app.exception_handler(Exception)
@@ -70,6 +75,18 @@ class SubtitlesBody(BaseModel):
     prefer_lang: Optional[str] = None
 
 
+class SummarizeBody(BaseModel):
+    url: str
+    prefer_lang: Optional[str] = None
+    output_lang: str = "English"
+    force_refresh: bool = False
+
+
+class TranscriptBody(BaseModel):
+    url: str
+    prefer_lang: Optional[str] = None
+
+
 # --------------------------------------------------------------------------
 # API
 # --------------------------------------------------------------------------
@@ -80,6 +97,8 @@ def health():
         "status": "ok",
         "ffmpeg": downloader.has_ffmpeg(),
         "llm_ready": settings.llm_ready,
+        "whisper_ready": False,
+        "analysis_features": ["summarize_sse", "transcript", "mindmap", "chat"],
     }
 
 
@@ -202,30 +221,95 @@ def _content_disposition(filename: str) -> str:
 
 @app.post("/api/summary")
 def api_summary(body: SummaryBody):
+    """Deprecated: use POST /api/summarize (SSE). Kept for backward compatibility."""
     if not settings.llm_ready:
         raise HTTPException(status_code=503, detail="LLM API key not configured; AI summary unavailable")
     url = body.url.strip()
+    if not url:
+        raise HTTPException(status_code=400, detail="Please enter a video URL")
     try:
-        sub = downloader.fetch_subtitle(url)
+        result = summarize_service.summarize_sync(url, body.output_lang)
     except ValueError as e:
-        raise HTTPException(status_code=422, detail=str(e))
-    except Exception as e:  # noqa: BLE001
-        raise HTTPException(status_code=422, detail=f"Failed to fetch subtitles: {_clean_err(e)}")
-
-    if not sub["plain_text"].strip():
-        raise HTTPException(status_code=422, detail="Subtitle content is empty; cannot summarize")
-
-    info = downloader.parse(url)
-    try:
-        summary = ai.summarize(info["title"], sub["plain_text"], body.output_lang)
+        code_msg = str(e)
+        if ":" in code_msg:
+            _, detail = code_msg.split(":", 1)
+        else:
+            detail = code_msg
+        raise HTTPException(status_code=422, detail=detail)
     except Exception as e:  # noqa: BLE001
         raise HTTPException(status_code=502, detail=f"AI summary failed: {_clean_err(e)}")
 
     return {
+        "title": result["title"],
+        "lang": result["lang"],
+        "is_auto": result["is_auto"],
+        "summary": result["summary_md"],
+        "deprecated": True,
+    }
+
+
+@app.post("/api/summarize")
+async def api_summarize(body: SummarizeBody, request: Request):
+    """SSE stream: transcript + streaming summary."""
+    url = body.url.strip()
+    if not url:
+        raise HTTPException(status_code=400, detail="Please enter a video URL")
+    if not settings.llm_ready:
+        raise HTTPException(
+            status_code=503,
+            detail="LLM API key not configured; AI summary unavailable",
+        )
+
+    async def event_generator():
+        async for event in summarize_service.stream_summarize(
+            url,
+            body.prefer_lang,
+            body.output_lang,
+            request,
+        ):
+            yield event.encode("utf-8")
+
+    return StreamingResponse(
+        event_generator(),
+        media_type="text/event-stream; charset=utf-8",
+        headers={
+            "Cache-Control": "no-cache",
+            "Connection": "keep-alive",
+            "X-Accel-Buffering": "no",
+        },
+    )
+
+
+@app.post("/api/transcript")
+def api_transcript(body: TranscriptBody):
+    url = body.url.strip()
+    if not url:
+        raise HTTPException(status_code=400, detail="Please enter a video URL")
+    try:
+        transcript, info = summarize_service.fetch_transcript_for_url(url, body.prefer_lang)
+    except ValueError as e:
+        code_msg = str(e)
+        detail = code_msg.split(":", 1)[-1] if ":" in code_msg else code_msg
+        if code_msg.startswith("bilibili_login_required:") or code_msg.startswith("login_required:"):
+            raise HTTPException(status_code=401, detail=detail) from e
+        raise HTTPException(status_code=422, detail=detail)
+    except RuntimeError as e:
+        code_msg = str(e)
+        if code_msg.startswith("rate_limited:"):
+            raise HTTPException(status_code=429, detail=code_msg.split(":", 1)[-1])
+        raise HTTPException(status_code=422, detail=f"Failed to fetch transcript: {_clean_err(e)}")
+    except Exception as e:  # noqa: BLE001
+        raise HTTPException(status_code=422, detail=f"Failed to fetch transcript: {_clean_err(e)}")
+
+    return {
         "title": info["title"],
-        "lang": sub["lang"],
-        "is_auto": sub["is_auto"],
-        "summary": summary,
+        "lang": transcript["lang"],
+        "is_auto": transcript["is_auto"],
+        "duration": info.get("duration"),
+        "cues": transcript["cues"],
+        "plain_text": transcript["plain_text"],
+        "truncated": transcript["truncated"],
+        "source": transcript["source"],
     }
 
 
@@ -292,6 +376,11 @@ def _clean_err(e: Exception) -> str:
     # Strip ANSI color codes and yt-dlp noise
     msg = re.sub(r"\x1b\[[0-9;]*m", "", msg)
     msg = re.sub(r"^ERROR:\s*", "", msg, flags=re.IGNORECASE).strip()
+    if "429" in msg or "too many requests" in msg.lower():
+        return (
+            "YouTube subtitle service is temporarily rate-limited (HTTP 429). "
+            "Please wait a minute and try again."
+        )
     return msg[:300] if msg else e.__class__.__name__
 
 

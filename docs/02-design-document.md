@@ -1,5 +1,7 @@
 # Design Document · Video Analysis Assistant (Universal Video Downloader)
 
+> **Historical baseline**: Frontend UI and AI APIs have evolved. For current implementation, see [04-ai-video-understanding-implementation.md](./04-ai-video-understanding-implementation.md) (AI) and [05-frontend-ui-implementation.md](./05-frontend-ui-implementation.md) (UI). Index: [README.md](./README.md).
+
 > Version: v1.0 | Corresponding implementation: Phase 3 (core business flow working)
 > This document describes the system architecture, module design, API contract, key flows, directory structure, configuration, and extension points. It serves as the technical baseline for future iterations.
 
@@ -129,12 +131,12 @@ sequenceDiagram
   FE->>BE: POST /api/download {url, format_id}
   BE->>Y: extract_info(download=True) (ffmpeg merge if needed)
   BE-->>FE: File stream → browser save
-  U->>FE: Click AI Summary / Translate
-  FE->>BE: POST /api/summary or /api/translate
+  U->>FE: Click AI Understand / Translate
+  FE->>BE: POST /api/summarize (SSE) or /api/translate
   BE->>Y: fetch subtitles
   BE->>L: summarize / translate
-  L-->>BE: result
-  BE-->>FE: summary text / SRT download
+  L-->>BE: result (SSE stream or SRT blob)
+  BE-->>FE: streaming summary / SRT download
 ```
 
 ## 6. Frontend Design
@@ -142,24 +144,28 @@ sequenceDiagram
 ### 6.1 Component Structure
 ```
 App
-├─ Navbar          Top bar: logo / menu / language toggle / Upgrade Pro
-├─ Hero            Headline + pill input + parse
-├─ ResultCard      Parse result: cover/info/quality/download/AI summary/translate
-├─ PlatformGallery Popular platforms card gallery
-├─ FeatureSection  Feature highlights (Free/PRO badges)
-├─ ProCTA          Upgrade Pro call-to-action
-└─ Footer          FAQ / Features / About / copyright notice
+├─ Navbar              Top bar: logo / menu / language toggle / Upgrade Pro
+├─ Hero                Headline + URL input + trust stats + AI preview panel
+├─ ResultCard          Two-column workbench: video info + download + ResultFlow
+│   └─ SummarizeSSESection   AI tabs (summary / transcript / mindmap / chat)
+├─ PlatformGallery     Platform cards (external links; Douyin/TikTok by lang)
+├─ FeatureSection      Feature highlights (Free/PRO badges)
+├─ PricingSection      Pricing comparison
+├─ FaqSection          FAQ accordion
+└─ Footer              About / copyright notice
 ```
+
+> **Removed**: `HistoryPanel` and localStorage parse history. **Legacy (unmounted)**: `UnderstandingSection.jsx`.
 
 ### 6.2 State and Data
 - `App` holds `url / loading / error / result / llmReady`; `health` drives the AI hint.
-- `ResultCard` manages its own loading and results for download/summary/translate.
-- `api.js` wraps all requests; download/translate use a blob + `<a download>` to trigger the browser save.
+- `ResultCard` manages download progress; `SummarizeSSESection` owns AI SSE state and `summarizeCache.js`.
+- `api.js` wraps REST; download uses async job polling + native `/file` save; translate uses blob + `<a download>`.
 
 ### 6.3 UI Style
-- Light background + indigo→violet→fuchsia gradient accent (`brand-gradient` / `brand-text`).
-- Rounded cards, soft shadows, hover lift and scale, `fade-up`/`float` animations.
-- Highlights paid value: PRO badges, value-focused copy, upgrade CTA.
+- Light mesh background + ink / electric blue / hot pink / soft cyan brand tokens (`index.css`, `tailwind.config.js`).
+- Reusable classes: `premium-panel`, `dark-panel`, `premium-button`, `card`, `brand-gradient`.
+- Conversion-oriented copy; PRO badges and upgrade CTA. Details: [05-frontend-ui-implementation.md](./05-frontend-ui-implementation.md).
 
 ### 6.4 Internationalization (i18n)
 - `src/i18n.jsx`: `LanguageProvider` + `useI18n()`; `t(path)` looks up by dot-path, falling back to Chinese if missing.
@@ -220,7 +226,7 @@ Production: `cd frontend && npm run build` → `cd ../backend && uvicorn app.mai
 | Download progress | yt-dlp `progress_hooks` + SSE/WebSocket push; progress bar on frontend |
 | Summary without subtitles | Add a Whisper speech-to-text branch in `downloader`, produce cues, then reuse the existing pipeline |
 | Real payment | Introduce user accounts + database + payment callbacks; add auth middleware to PRO features |
-| History | Introduce a lightweight DB (SQLite) to record parse/download history |
+| History | Server-side DB (SQLite) for parse/download history — **not implemented**; localStorage history was removed in UI redesign |
 | Summary follows UI language | Add a `lang` param to `/api/summary`; switch prompts by language in `ai.summarize` |
 
 ## 11. Known Limitations

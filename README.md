@@ -10,8 +10,13 @@ lightweight, database-free, and mobile-friendly.
 
 ## Docs
 
-- [Requirements Analysis](docs/01-requirements-analysis.md)
-- [Design Document](docs/02-design-document.md)
+See [docs/README.md](docs/README.md) for the full index. **Current implementation references:**
+
+- [AI video understanding (SSE, mindmap, chat)](docs/04-ai-video-understanding-implementation.md)
+- [Frontend UI (landing, workbench, i18n)](docs/05-frontend-ui-implementation.md)
+- [Video download (yt-dlp, progress, ffmpeg)](docs/VIDEO_DOWNLOAD.md)
+
+Historical: [01 requirements](docs/01-requirements-analysis.md), [02 design](docs/02-design-document.md), [02/03 AI design drafts](docs/02-ai-video-understanding-design.md).
 
 ## Features
 
@@ -19,7 +24,7 @@ lightweight, database-free, and mobile-friendly.
 - Server-side download relayed to the browser; works on phone / tablet / desktop
 - AI video summary: auto-extract subtitles → LLM generates Chinese key points and outline
 - Subtitle translation: extract subtitles → LLM translation → export standard SRT
-- A clean gallery-style UI (inspired by Yupi AI Nav) that highlights paid value
+- AI video workbench UI with streaming summary, transcript, mind map, and Q&A
 - One-click Chinese/English language switch
 
 ## Tech Stack

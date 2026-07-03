@@ -20,26 +20,27 @@ export default function FeatureSection() {
     <section id="features" className="mx-auto mt-24 max-w-6xl px-4 sm:px-6">
       <div className="mb-10 text-center">
         <span className="section-badge">{t("features.badge")}</span>
-        <h2 className="mt-3 text-3xl font-extrabold text-slate-900 sm:text-4xl">
+        <h2 className="mt-4 text-3xl font-black tracking-tight text-ink-950 sm:text-5xl">
           {t("features.heading_1")}
           <span className="brand-text">{t("features.heading_2")}</span>
         </h2>
-        <p className="mx-auto mt-3 max-w-xl text-slate-500">{t("features.sub")}</p>
+        <p className="mx-auto mt-4 max-w-2xl text-base leading-7 text-slate-500">{t("features.sub")}</p>
       </div>
 
       <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
         {items.map((f, i) => {
           const isPro = IS_PRO[i];
           return (
-            <div key={f.title} className="card p-6 hover:-translate-y-1 hover:shadow-lg hover:shadow-indigo-100">
+            <div key={f.title} className={`card group relative overflow-hidden p-6 hover:-translate-y-1 hover:shadow-glow ${i === 2 ? "lg:row-span-2 lg:p-7" : ""}`}>
+              <div className="pointer-events-none absolute -right-12 -top-12 h-28 w-28 rounded-full bg-neon-200/60 blur-3xl transition group-hover:bg-accent-200/60" />
               <div className="mb-4 flex items-center justify-between">
-                <span className="brand-gradient flex h-11 w-11 items-center justify-center rounded-xl text-white shadow-md">
+                <span className="brand-gradient relative flex h-12 w-12 items-center justify-center rounded-2xl text-white shadow-lg shadow-accent-200/40 transition group-hover:-rotate-3 group-hover:scale-105">
                   <svg viewBox="0 0 24 24" className="h-6 w-6" fill="none" stroke="currentColor" strokeWidth="1.8">
                     {ICONS[i]}
                   </svg>
                 </span>
                 <span
-                  className={`rounded-full px-2.5 py-1 text-xs font-bold ${
+                  className={`relative rounded-full px-3 py-1 text-xs font-black ${
                     isPro
                       ? "bg-gradient-to-r from-amber-400 to-orange-500 text-white"
                       : "bg-emerald-100 text-emerald-600"
@@ -48,8 +49,21 @@ export default function FeatureSection() {
                   {isPro ? t("features.pro") : t("features.free")}
                 </span>
               </div>
-              <h3 className="text-lg font-bold text-slate-800">{f.title}</h3>
-              <p className="mt-2 text-sm leading-relaxed text-slate-500">{f.desc}</p>
+              <h3 className="relative text-xl font-black text-ink-950">{f.title}</h3>
+              <p className="relative mt-3 text-sm leading-7 text-slate-500">{f.desc}</p>
+              {i === 2 && (
+                <div className="relative mt-6 rounded-2xl bg-slate-50 p-4">
+                  <div className="mb-3 flex items-center justify-between text-xs font-black uppercase tracking-[0.16em] text-slate-400">
+                    <span>AI Output</span>
+                    <span className="text-brand-600">Live</span>
+                  </div>
+                  <div className="space-y-2">
+                    <span className="block h-2 rounded-full bg-brand-200" />
+                    <span className="block h-2 w-4/5 rounded-full bg-neon-200" />
+                    <span className="block h-2 w-2/3 rounded-full bg-accent-200" />
+                  </div>
+                </div>
+              )}
             </div>
           );
         })}

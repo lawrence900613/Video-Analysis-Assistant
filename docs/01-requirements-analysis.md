@@ -39,7 +39,7 @@ Core needs keywords: **fast, all-platform, anytime/anywhere, mobile-friendly, se
 
 ### 3.2 Interaction & Experience Requirements (Implemented)
 
-- **F5 Distinctive, conversion-oriented UI**: References the "Yupi AI Nav" clean gallery style (light background + indigo/violet gradient accent + card gallery), highlighting paid value (PRO badges, value-focused copy, upgrade CTA).
+- **F5 Distinctive, conversion-oriented UI**: AI video workbench landing (light mesh + brand tokens, hero + result workbench + AI tabs), highlighting paid value (PRO badges, value-focused copy, upgrade CTA). Current UI: [05-frontend-ui-implementation.md](./05-frontend-ui-implementation.md).
 - **F6 Responsive / mobile-friendly**: Adapts to phone, tablet, and desktop.
 - **F7 Chinese/English switch**: One-click switch of the whole site's language, with the choice persisted locally.
 

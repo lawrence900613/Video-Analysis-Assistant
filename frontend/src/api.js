@@ -201,3 +201,68 @@ export async function health() {
   }
   return res.json();
 }
+
+/** Parse SSE stream from POST /api/summarize; yields { event, data }. */
+export async function* streamSummarize(url, { preferLang, outputLang, forceRefresh, signal } = {}) {
+  const body = { url, output_lang: outputLang || "English" };
+  if (preferLang) body.prefer_lang = preferLang;
+  if (forceRefresh) body.force_refresh = true;
+
+  const res = await fetch(BASE + "/summarize", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+    signal,
+  });
+
+  if (!res.ok) {
+    let detail = `Request failed (${res.status})`;
+    try {
+      const data = await res.json();
+      if (data.detail) detail = data.detail;
+    } catch {
+      /* ignore */
+    }
+    throw new Error(detail);
+  }
+
+  const reader = res.body?.getReader();
+  if (!reader) throw new Error("Streaming not supported");
+
+  const decoder = new TextDecoder();
+  let buffer = "";
+
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    buffer += decoder.decode(value, { stream: true });
+
+    const parts = buffer.split("\n\n");
+    buffer = parts.pop() || "";
+
+    for (const part of parts) {
+      if (!part.trim()) continue;
+      let event = "message";
+      let dataStr = "";
+      for (const line of part.split("\n")) {
+        if (line.startsWith("event:")) event = line.slice(6).trim();
+        else if (line.startsWith("data:")) dataStr += line.slice(5).trim();
+      }
+      if (!dataStr) continue;
+      let data;
+      try {
+        data = JSON.parse(dataStr);
+      } catch {
+        data = { raw: dataStr };
+      }
+      yield { event, data };
+    }
+  }
+}
+
+export async function fetchTranscript(url, preferLang) {
+  const body = { url };
+  if (preferLang) body.prefer_lang = preferLang;
+  const res = await postJSON("/transcript", body);
+  return res.json();
+}

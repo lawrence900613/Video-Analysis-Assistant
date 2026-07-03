@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import Navbar from "./components/Navbar.jsx";
 import Hero from "./components/Hero.jsx";
 import ResultCard from "./components/ResultCard.jsx";
-import HistoryPanel from "./components/HistoryPanel.jsx";
 import PlatformGallery from "./components/PlatformGallery.jsx";
 import FeatureSection from "./components/FeatureSection.jsx";
 import PricingSection from "./components/PricingSection.jsx";
@@ -10,7 +9,6 @@ import FaqSection from "./components/FaqSection.jsx";
 import Footer from "./components/Footer.jsx";
 import { health, parseVideo } from "./api";
 import { useI18n } from "./i18n.jsx";
-import { addHistory, clearHistory, getHistory, removeHistory } from "./utils/history.js";
 import { computeFlowStep } from "./utils/progress.js";
 
 export default function App() {
@@ -21,7 +19,6 @@ export default function App() {
   const [result, setResult] = useState(null);
   const [llmReady, setLlmReady] = useState(true);
   const [ffmpegAvailable, setFfmpegAvailable] = useState(true);
-  const [history, setHistory] = useState(() => getHistory());
   const [downloading, setDownloading] = useState(false);
   const [downloaded, setDownloaded] = useState(false);
 
@@ -50,17 +47,6 @@ export default function App() {
       setResult(data);
       setFfmpegAvailable(!!data.ffmpeg);
       setUrl(trimmed);
-      setHistory(
-        addHistory({
-          url: trimmed,
-          title: data.title,
-          thumbnail: data.thumbnail,
-          extractor: data.extractor,
-          view_count: data.view_count,
-          parsedAt: Date.now(),
-        })
-      );
-      document.getElementById("result")?.scrollIntoView({ behavior: "smooth", block: "start" });
     } catch (e) {
       setError(e.message);
     } finally {
@@ -70,28 +56,12 @@ export default function App() {
 
   const handleParse = () => runParse(url);
 
-  const handleHistorySelect = (itemUrl) => {
-    setUrl(itemUrl);
-    runParse(itemUrl);
-  };
-
   const handleDownloadStart = () => setDownloading(true);
 
   const handleDownloaded = () => {
     if (!result) return;
     setDownloading(false);
     setDownloaded(true);
-    setHistory(
-      addHistory({
-        url: url.trim(),
-        title: result.title,
-        thumbnail: result.thumbnail,
-        extractor: result.extractor,
-        view_count: result.view_count,
-        parsedAt: Date.now(),
-        downloadedAt: Date.now(),
-      })
-    );
   };
 
   const flowStep = computeFlowStep({ url, loading, result, downloading, downloaded });
@@ -111,12 +81,6 @@ export default function App() {
             onDownloaded={handleDownloaded}
           />
         )}
-        <HistoryPanel
-          items={history}
-          onSelect={handleHistorySelect}
-          onRemove={(id) => setHistory(removeHistory(id))}
-          onClear={() => setHistory(clearHistory())}
-        />
         <PlatformGallery />
         <FeatureSection />
         <PricingSection />

@@ -9,46 +9,47 @@ export default function PricingSection() {
     <section id="pricing" className="mx-auto mt-24 max-w-6xl px-4 sm:px-6">
       <div className="mb-10 text-center">
         <span className="section-badge">{t("pricing.badge")}</span>
-        <h2 className="mt-3 text-3xl font-extrabold text-slate-900 sm:text-4xl">
+        <h2 className="mt-4 text-3xl font-black tracking-tight text-ink-950 sm:text-5xl">
           {t("pricing.heading_1")}
           <span className="brand-text">{t("pricing.heading_2")}</span>
         </h2>
-        <p className="mx-auto mt-3 max-w-xl text-slate-500">{t("pricing.sub")}</p>
+        <p className="mx-auto mt-4 max-w-2xl text-base leading-7 text-slate-500">{t("pricing.sub")}</p>
       </div>
 
       <div className="grid gap-6 lg:grid-cols-2">
         {plans.map((plan) => (
           <div
             key={plan.name}
-            className={`card relative overflow-hidden p-6 sm:p-8 ${
+            className={`relative overflow-hidden rounded-[2rem] p-6 transition duration-300 sm:p-8 ${
               plan.highlight
-                ? "ring-2 ring-indigo-400 shadow-xl shadow-indigo-100"
-                : "hover:shadow-lg hover:shadow-slate-100"
+                ? "dark-panel hover:-translate-y-1"
+                : "card hover:-translate-y-1 hover:shadow-glow"
             }`}
           >
+            <div className="pointer-events-none absolute -right-10 -top-10 h-32 w-32 rounded-full bg-neon-300/20 blur-3xl" />
             {plan.highlight && (
-              <span className="absolute right-4 top-4 rounded-full bg-gradient-to-r from-amber-400 to-orange-500 px-3 py-1 text-xs font-bold text-white">
+              <span className="absolute right-4 top-4 rounded-full bg-gradient-to-r from-amber-400 to-orange-500 px-3 py-1 text-xs font-black text-white">
                 {t("pricing.popular")}
               </span>
             )}
-            <h3 className="text-xl font-bold text-slate-900">{plan.name}</h3>
+            <h3 className={`relative text-xl font-black ${plan.highlight ? "text-white" : "text-ink-950"}`}>{plan.name}</h3>
             <div className="mt-2 flex items-baseline gap-1">
-              <span className="text-4xl font-extrabold text-slate-900">{plan.price}</span>
-              {plan.period && <span className="text-sm text-slate-500">{plan.period}</span>}
+              <span className={`relative text-5xl font-black tracking-tight ${plan.highlight ? "text-white" : "text-ink-950"}`}>{plan.price}</span>
+              {plan.period && <span className={`relative text-sm font-bold ${plan.highlight ? "text-white/55" : "text-slate-500"}`}>{plan.period}</span>}
             </div>
-            <p className="mt-2 text-sm text-slate-500">{plan.desc}</p>
+            <p className={`relative mt-3 text-sm leading-6 ${plan.highlight ? "text-white/65" : "text-slate-500"}`}>{plan.desc}</p>
 
-            <ul className="mt-6 space-y-3">
+            <ul className="relative mt-6 space-y-3">
               {features.map((f, i) => {
                 const included = plan.included[i];
                 return (
                   <li key={f} className="flex items-center gap-2.5 text-sm">
                     {included ? (
-                      <CheckIcon className="text-emerald-500" />
+                      <CheckIcon className={plan.highlight ? "text-neon-300" : "text-emerald-500"} />
                     ) : (
                       <CrossIcon className="text-slate-300" />
                     )}
-                    <span className={included ? "text-slate-700" : "text-slate-400"}>{f}</span>
+                    <span className={included ? (plan.highlight ? "font-semibold text-white/85" : "font-semibold text-slate-700") : "text-slate-400"}>{f}</span>
                   </li>
                 );
               })}
@@ -56,10 +57,10 @@ export default function PricingSection() {
 
             <a
               href={plan.highlight ? "#home" : "#home"}
-              className={`mt-8 block w-full rounded-xl py-3 text-center text-sm font-bold transition ${
+              className={`relative mt-8 block w-full rounded-2xl py-3 text-center text-sm font-black transition ${
                 plan.highlight
-                  ? "brand-gradient text-white shadow-lg shadow-indigo-200 hover:scale-[1.02]"
-                  : "border-2 border-slate-200 bg-white text-slate-700 hover:border-indigo-300 hover:text-indigo-600"
+                  ? "bg-white text-ink-950 shadow-xl shadow-white/10 hover:-translate-y-0.5"
+                  : "border-2 border-slate-200 bg-white text-slate-700 hover:border-brand-300 hover:text-brand-700"
               }`}
             >
               {plan.cta}
@@ -68,7 +69,7 @@ export default function PricingSection() {
         ))}
       </div>
 
-      <p className="mt-6 text-center text-xs text-slate-400">{t("pricing.note")}</p>
+      <p className="mt-6 text-center text-xs font-bold uppercase tracking-[0.14em] text-slate-400">{t("pricing.note")}</p>
     </section>
   );
 }
