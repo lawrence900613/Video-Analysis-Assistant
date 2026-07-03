@@ -3,7 +3,10 @@ import { useEffect, useRef } from "react";
 import { Markmap } from "markmap-view";
 import { Transformer } from "markmap-lib";
 
-const BRAND_COLORS = ["#6366f1", "#7c3aed", "#8b5cf6", "#a855f7", "#818cf8"];
+import { useTheme } from "../theme.jsx";
+
+const BRAND_COLORS_LIGHT = ["#6366f1", "#7c3aed", "#8b5cf6", "#a855f7", "#818cf8"];
+const BRAND_COLORS_DARK = ["#a5b4fc", "#c4b5fd", "#d8b4fe", "#e879f9", "#93c5fd"];
 
 export default function MindMapPanel({
   markdown,
@@ -15,25 +18,31 @@ export default function MindMapPanel({
 }) {
   const svgRef = useRef(null);
   const markmapRef = useRef(null);
+  const { theme } = useTheme();
 
   useEffect(() => {
     if (!markdown || !svgRef.current) return;
 
+    const palette = theme === "dark" ? BRAND_COLORS_DARK : BRAND_COLORS_LIGHT;
     const transformer = new Transformer();
     const { root } = transformer.transform(markdown);
 
-    if (!markmapRef.current) {
-      markmapRef.current = Markmap.create(svgRef.current, {
-        autoFit: true,
-        duration: 400,
-        paddingX: 18,
-        color: (node) => BRAND_COLORS[node.state?.depth % BRAND_COLORS.length],
-      });
+    if (markmapRef.current) {
+      markmapRef.current.destroy?.();
+      markmapRef.current = null;
     }
+    svgRef.current.innerHTML = "";
+
+    markmapRef.current = Markmap.create(svgRef.current, {
+      autoFit: true,
+      duration: 400,
+      paddingX: 18,
+      color: (node) => palette[node.state?.depth % palette.length],
+    });
 
     markmapRef.current.setData(root);
     markmapRef.current.fit();
-  }, [markdown]);
+  }, [markdown, theme]);
 
   if (loading) {
     return (
@@ -99,8 +108,8 @@ export default function MindMapPanel({
           </button>
         )}
       </div>
-      <div className="overflow-hidden rounded-xl border border-indigo-100/80 bg-gradient-to-br from-indigo-50/30 via-white to-violet-50/20 dark:border-brand-500/20 dark:from-ink-950 dark:via-ink-900 dark:to-ink-950">
-        <svg ref={svgRef} className="h-[420px] w-full dark:bg-ink-900" />
+      <div className="mindmap-panel overflow-hidden rounded-xl border border-indigo-100/80 bg-gradient-to-br from-indigo-50/30 via-white to-violet-50/20 dark:border-brand-400/25 dark:from-ink-900/95 dark:via-ink-900 dark:to-ink-950">
+        <svg ref={svgRef} className="h-[420px] w-full dark:bg-ink-900" aria-label="Mind map" />
       </div>
     </div>
   );

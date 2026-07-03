@@ -64,3 +64,10 @@ class Settings:
 @lru_cache
 def get_settings() -> Settings:
     return Settings()
+
+
+def reload_settings() -> Settings:
+    """Reload .env and return fresh settings (clears cached singleton)."""
+    load_dotenv(BACKEND_DIR / ".env", override=True)
+    get_settings.cache_clear()
+    return get_settings()

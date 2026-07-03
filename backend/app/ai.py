@@ -7,10 +7,38 @@ from typing import Iterator
 
 from openai import OpenAI
 
-from .config import get_settings
+from .config import get_settings, reload_settings
 from .transcript_utils import ts_to_sec
 
-settings = get_settings()
+
+def _settings():
+    return get_settings()
+
+
+def _uses_anthropic_compat() -> bool:
+    s = _settings()
+    return "anthropic.com" in (s.llm_base_url or "")
+
+
+def _supports_temperature() -> bool:
+    """Anthropic Opus 4.x rejects explicit temperature via the OpenAI compat API."""
+    s = _settings()
+    if _uses_anthropic_compat() and "claude-opus-4" in s.llm_model.lower():
+        return False
+    return True
+
+
+def _supports_openai_json_format() -> bool:
+    """Anthropic compat expects json_schema, not json_object; rely on prompt instead."""
+    return not _uses_anthropic_compat()
+
+
+def _with_temperature(**kwargs: object) -> dict:
+    out = dict(kwargs)
+    if _supports_temperature():
+        out["temperature"] = 0.3
+    return out
+
 
 _MARKDOWN_FORMAT = (
     "Output Markdown with this structure:\n"
@@ -22,6 +50,7 @@ _MARKDOWN_FORMAT = (
 
 
 def _client() -> OpenAI:
+    settings = _settings()
     if not settings.llm_ready:
         raise RuntimeError(
             "LLM API key not configured. Set LLM_API_KEY, LLM_BASE_URL, and LLM_MODEL in backend/.env."
@@ -43,21 +72,19 @@ def _parse_json_response(text: str) -> dict:
 
 def _chat_json(system: str, user: str, retries: int = 1) -> dict:
     client = _client()
+    settings = _settings()
     last_err: Exception | None = None
     for attempt in range(retries + 1):
         try:
-            kwargs: dict = {
-                "model": settings.llm_model,
-                "messages": [
+            kwargs: dict = _with_temperature(
+                model=settings.llm_model,
+                messages=[
                     {"role": "system", "content": system},
                     {"role": "user", "content": user},
                 ],
-                "temperature": 0.3,
-            }
-            try:
+            )
+            if _supports_openai_json_format():
                 kwargs["response_format"] = {"type": "json_object"}
-            except Exception:
-                pass
             resp = client.chat.completions.create(**kwargs)
             return _parse_json_response(resp.choices[0].message.content or "")
         except Exception as e:
@@ -122,14 +149,16 @@ def map_summarize_chunk(
 def _stream_chat_markdown(system: str, user: str) -> Iterator[str]:
     """Stream chat completion content deltas."""
     client = _client()
+    settings = _settings()
     stream = client.chat.completions.create(
-        model=settings.llm_model,
-        messages=[
-            {"role": "system", "content": system},
-            {"role": "user", "content": user},
-        ],
-        temperature=0.3,
-        stream=True,
+        **_with_temperature(
+            model=settings.llm_model,
+            messages=[
+                {"role": "system", "content": system},
+                {"role": "user", "content": user},
+            ],
+            stream=True,
+        )
     )
     for chunk in stream:
         delta = chunk.choices[0].delta.content if chunk.choices else None
@@ -364,6 +393,7 @@ def answer_question_stream(
 ) -> Iterator[str]:
     """Stream a Q&A answer grounded in transcript context."""
     client = _client()
+    settings = _settings()
     system = _build_qa_system_prompt(title, context, output_lang)
     chat_messages = [{"role": "system", "content": system}]
     for msg in messages:
@@ -373,10 +403,11 @@ def answer_question_stream(
             chat_messages.append({"role": role, "content": content})
 
     stream = client.chat.completions.create(
-        model=settings.llm_model,
-        messages=chat_messages,
-        temperature=0.3,
-        stream=True,
+        **_with_temperature(
+            model=settings.llm_model,
+            messages=chat_messages,
+            stream=True,
+        )
     )
     for chunk in stream:
         delta = chunk.choices[0].delta.content if chunk.choices else None
@@ -427,6 +458,7 @@ def extract_citations_from_answer(answer: str, cues: list[dict]) -> list[dict]:
 def translate_cues(cues: list[dict], target_lang: str) -> list[dict]:
     """Translate subtitle cues line by line while preserving timestamps."""
     client = _client()
+    settings = _settings()
     if not cues:
         return cues
 
@@ -440,15 +472,16 @@ def translate_cues(cues: list[dict], target_lang: str) -> list[dict]:
         f"{numbered}"
     )
     resp = client.chat.completions.create(
-        model=settings.llm_model,
-        messages=[
-            {
-                "role": "system",
-                "content": "You are a professional subtitle translator. Output must preserve [index] prefixes.",
-            },
-            {"role": "user", "content": prompt},
-        ],
-        temperature=0.3,
+        **_with_temperature(
+            model=settings.llm_model,
+            messages=[
+                {
+                    "role": "system",
+                    "content": "You are a professional subtitle translator. Output must preserve [index] prefixes.",
+                },
+                {"role": "user", "content": prompt},
+            ],
+        )
     )
     text = resp.choices[0].message.content or ""
 

@@ -129,6 +129,25 @@ html.dark body {
       linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
       linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
   }
+
+  /* Mind map — improve dark-mode contrast (markmap renders text in SVG foreignObject) */
+  .mindmap-panel svg foreignObject div {
+    @apply text-sm font-medium leading-snug text-slate-700;
+  }
+  html.dark .mindmap-panel svg foreignObject div {
+    color: #f1f5f9 !important;
+    font-weight: 600;
+  }
+  html.dark .mindmap-panel svg foreignObject div * {
+    color: inherit !important;
+  }
+  html.dark .mindmap-panel svg path {
+    stroke-opacity: 0.95;
+    stroke-width: 2px;
+  }
+  html.dark .mindmap-panel svg circle {
+    fill: #e2e8f0;
+  }
 }
 
 ::-webkit-scrollbar {

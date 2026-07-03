@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import os
 import re
+from contextlib import asynccontextmanager
 from pathlib import Path
 from typing import Optional
 from urllib.parse import quote
@@ -15,15 +16,22 @@ from pydantic import BaseModel
 from starlette.background import BackgroundTask
 
 from . import ai, downloader
-from .config import get_settings
+from .config import get_settings, reload_settings
 from . import download_jobs
 from . import summarize_service
 from .routes import chat_sse, mindmap
 from .downloader import normalize_url
 
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    reload_settings()
+    yield
+
+
 settings = get_settings()
 
-app = FastAPI(title="Video Analysis Assistant", version="1.0.0")
+app = FastAPI(title="Video Analysis Assistant", version="1.0.0", lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
