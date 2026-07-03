@@ -209,6 +209,11 @@ export const translations = {
       copyright: "Video Analysis Assistant · Powered by yt-dlp + FastAPI + React",
     },
     lang_switch: "EN",
+    theme: {
+      light: "浅色",
+      dark: "深色",
+      toggle_aria: "切换主题",
+    },
   },
 
   en: {
@@ -419,6 +424,11 @@ export const translations = {
       copyright: "Video Analysis Assistant · Powered by yt-dlp + FastAPI + React",
     },
     lang_switch: "中文",
+    theme: {
+      light: "Light",
+      dark: "Dark",
+      toggle_aria: "Switch theme",
+    },
   },
 };
 

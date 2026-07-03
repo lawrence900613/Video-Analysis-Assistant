@@ -145,7 +145,7 @@ export default function ResultCard({ result, url, llmReady, ffmpegAvailable, onD
     <section id="result" className="mx-auto mt-6 max-w-6xl animate-fade-up px-4 sm:px-6">
       <div className="premium-panel overflow-hidden p-4 sm:p-6">
         {showFfmpegWarning && (
-          <div className="mb-4 rounded-2xl border border-amber-200 bg-amber-50/90 px-4 py-3 text-sm font-medium text-amber-800">
+          <div className="mb-4 rounded-2xl border border-amber-200 bg-amber-50/90 px-4 py-3 text-sm font-medium text-amber-800 dark:border-amber-500/30 dark:bg-amber-950/40 dark:text-amber-200">
             {t("result.ffmpeg_warning")}
           </div>
         )}
@@ -182,15 +182,15 @@ export default function ResultCard({ result, url, llmReady, ffmpegAvailable, onD
             </div>
           </div>
 
-          <div className="min-w-0 rounded-[1.5rem] border border-slate-200/70 bg-white/75 p-5 shadow-sm">
+          <div className="min-w-0 rounded-[1.5rem] border border-slate-200/70 bg-white/75 p-5 shadow-sm dark:border-white/10 dark:bg-ink-900/70">
             <div className="flex flex-wrap items-center gap-2">
               {result.extractor && (
-                <span className="rounded-full bg-brand-50 px-3 py-1 text-xs font-black uppercase tracking-[0.12em] text-brand-700">
+                <span className="rounded-full bg-brand-50 px-3 py-1 text-xs font-black uppercase tracking-[0.12em] text-brand-700 dark:bg-brand-500/20 dark:text-brand-300">
                   {result.extractor}
                 </span>
               )}
               {result.has_subtitles && (
-                <span className="rounded-full bg-emerald-50 px-3 py-1 text-xs font-black uppercase tracking-[0.12em] text-emerald-600">
+                <span className="rounded-full bg-emerald-50 px-3 py-1 text-xs font-black uppercase tracking-[0.12em] text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-300">
                   {t("result.has_subtitles")}
                 </span>
               )}
@@ -215,7 +215,7 @@ export default function ResultCard({ result, url, llmReady, ffmpegAvailable, onD
                   setSubLangManual(true);
                   setSubLang(e.target.value);
                 }}
-                    className="w-full max-w-xs rounded-2xl border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-700 outline-none transition focus:border-brand-400 focus:ring-4 focus:ring-brand-100 sm:w-auto"
+                    className="w-full max-w-xs rounded-2xl border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-700 outline-none transition focus:border-brand-400 focus:ring-4 focus:ring-brand-100 dark:border-white/10 dark:bg-ink-950 dark:text-slate-200 dark:focus:border-brand-400 dark:focus:ring-brand-500/20 sm:w-auto"
               >
                 {result.subtitle_langs.map((l) => (
                   <option key={l} value={l}>{l}</option>
@@ -233,8 +233,8 @@ export default function ResultCard({ result, url, llmReady, ffmpegAvailable, onD
                   onClick={() => setSelected(opt.id)}
                       className={`rounded-2xl border px-3 py-2 text-sm font-bold transition ${
                     selected === opt.id
-                          ? "border-brand-500 bg-brand-50 text-brand-700 shadow-sm shadow-brand-100"
-                          : "border-slate-200 bg-white text-slate-600 hover:border-brand-300 hover:text-brand-700"
+                          ? "border-brand-500 bg-brand-50 text-brand-700 shadow-sm shadow-brand-100 dark:border-brand-400 dark:bg-brand-500/20 dark:text-brand-300 dark:shadow-brand-500/10"
+                          : "border-slate-200 bg-white text-slate-600 hover:border-brand-300 hover:text-brand-700 dark:border-white/10 dark:bg-ink-950/80 dark:text-slate-300 dark:hover:border-brand-400/40 dark:hover:text-brand-300"
                   }`}
                 >
                   {optionLabel(opt)}
@@ -258,12 +258,12 @@ export default function ResultCard({ result, url, llmReady, ffmpegAvailable, onD
           </div>
 
           {downloading && (
-                <div className="mt-5 rounded-2xl border border-brand-100 bg-brand-50/60 p-4">
-                  <div className="mb-2 flex justify-between text-xs font-bold text-slate-500">
+                <div className="mt-5 rounded-2xl border border-brand-100 bg-brand-50/60 p-4 dark:border-brand-500/20 dark:bg-brand-500/10">
+                  <div className="mb-2 flex justify-between text-xs font-bold text-slate-500 dark:text-slate-400">
                 <span>{t("result.downloading")}</span>
                 <span>{progressDetail()}</span>
               </div>
-                  <div className="relative h-2.5 overflow-hidden rounded-full bg-white">
+                  <div className="relative h-2.5 overflow-hidden rounded-full bg-white dark:bg-ink-950">
                 {progressIndeterminate ? (
                   <div className="absolute inset-y-0 w-1/3 animate-progress-indeterminate brand-gradient rounded-full" />
                 ) : (
@@ -343,12 +343,12 @@ export default function ResultCard({ result, url, llmReady, ffmpegAvailable, onD
 
 function ResultFlow({ steps, currentStep, label }) {
   return (
-    <div className="mt-5 rounded-[1.25rem] border border-brand-100 bg-gradient-to-r from-brand-50 via-white to-accent-100/40 p-3">
+    <div className="mt-5 rounded-[1.25rem] border border-brand-100 bg-gradient-to-r from-brand-50 via-white to-accent-100/40 p-3 dark:border-brand-500/20 dark:from-brand-500/10 dark:via-ink-900/50 dark:to-accent-500/10">
       <div className="mb-3 flex items-center justify-between">
         <p className="text-xs font-black uppercase tracking-[0.16em] text-brand-700">{label}</p>
         <p className="text-xs font-black text-slate-400">{currentStep}/{steps.length}</p>
       </div>
-      <div className="mb-3 h-2 overflow-hidden rounded-full bg-white shadow-inner">
+      <div className="mb-3 h-2 overflow-hidden rounded-full bg-white shadow-inner dark:bg-ink-950">
         <div
           className="h-full rounded-full bg-gradient-to-r from-neon-400 via-brand-500 to-accent-500 transition-all duration-500"
           style={{ width: `${Math.min(100, (currentStep / steps.length) * 100)}%` }}
@@ -363,10 +363,10 @@ function ResultFlow({ steps, currentStep, label }) {
               key={step}
               className={`rounded-2xl border px-3 py-2 ${
                 active
-                  ? "border-brand-300 bg-white shadow-sm shadow-brand-100"
+                  ? "border-brand-300 bg-white shadow-sm shadow-brand-100 dark:border-brand-400/40 dark:bg-ink-900 dark:shadow-brand-500/10"
                   : done
-                    ? "border-emerald-100 bg-emerald-50"
-                    : "border-slate-200 bg-white/70"
+                    ? "border-emerald-100 bg-emerald-50 dark:border-emerald-500/30 dark:bg-emerald-500/10"
+                    : "border-slate-200 bg-white/70 dark:border-white/10 dark:bg-ink-950/50"
               }`}
             >
               <div className="flex items-center gap-2">
@@ -376,7 +376,7 @@ function ResultFlow({ steps, currentStep, label }) {
                       ? "brand-gradient text-white"
                       : done
                         ? "bg-emerald-500 text-white"
-                        : "bg-slate-100 text-slate-400"
+                        : "bg-slate-100 text-slate-400 dark:bg-white/10 dark:text-slate-500"
                   }`}
                 >
                   {done ? "✓" : index + 1}
@@ -395,13 +395,13 @@ function ResultFlow({ steps, currentStep, label }) {
 
 function ActionBtn({ children, onClick, disabled, loading, loadingText, cancelMode, primary, pro, accent }) {
   const border = accent === "fuchsia"
-    ? "border-accent-200 text-accent-600 hover:border-accent-400 hover:bg-accent-50"
-    : "border-brand-200 text-brand-700 hover:border-brand-400 hover:bg-brand-50";
+    ? "border-accent-200 text-accent-600 hover:border-accent-400 hover:bg-accent-50 dark:border-accent-500/30 dark:text-accent-300 dark:hover:border-accent-400/50 dark:hover:bg-accent-500/10"
+    : "border-brand-200 text-brand-700 hover:border-brand-400 hover:bg-brand-50 dark:border-brand-500/30 dark:text-brand-300 dark:hover:border-brand-400/50 dark:hover:bg-brand-500/10";
   const cancelStyles = cancelMode
-    ? "border-2 border-slate-300 bg-white text-slate-700 hover:border-slate-400 hover:bg-slate-50"
+    ? "border-2 border-slate-300 bg-white text-slate-700 hover:border-slate-400 hover:bg-slate-50 dark:border-white/15 dark:bg-ink-900 dark:text-slate-200 dark:hover:border-white/25 dark:hover:bg-white/5"
     : primary
       ? "brand-gradient text-white shadow-lg shadow-accent-200/50 hover:-translate-y-0.5"
-      : `border-2 bg-white ${border}`;
+      : `border-2 bg-white dark:bg-ink-900/80 ${border}`;
   return (
     <button
       type="button"
@@ -424,12 +424,12 @@ function ActionBtn({ children, onClick, disabled, loading, loadingText, cancelMo
 }
 
 function Alert({ children }) {
-  return <p className="mt-3 rounded-2xl border border-red-100 bg-red-50 px-4 py-3 text-sm font-medium text-red-600">{children}</p>;
+  return <p className="mt-3 rounded-2xl border border-red-100 bg-red-50 px-4 py-3 text-sm font-medium text-red-600 dark:border-red-500/30 dark:bg-red-950/40 dark:text-red-300">{children}</p>;
 }
 
 function StatusMsg({ children, failed }) {
   return (
-    <p className={`mt-3 rounded-2xl border px-4 py-3 text-sm font-medium ${failed ? "border-red-100 bg-red-50 text-red-600" : "border-emerald-100 bg-emerald-50 text-emerald-600"}`}>
+    <p className={`mt-3 rounded-2xl border px-4 py-3 text-sm font-medium ${failed ? "border-red-100 bg-red-50 text-red-600 dark:border-red-500/30 dark:bg-red-950/40 dark:text-red-300" : "border-emerald-100 bg-emerald-50 text-emerald-600 dark:border-emerald-500/30 dark:bg-emerald-950/40 dark:text-emerald-300"}`}>
       {children}
     </p>
   );

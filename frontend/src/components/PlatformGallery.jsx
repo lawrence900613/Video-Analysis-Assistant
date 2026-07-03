@@ -41,11 +41,11 @@ export default function PlatformGallery() {
     <section id="platforms" className="mx-auto mt-20 max-w-6xl px-4 sm:px-6">
       <div className="mb-10 text-center">
         <span className="section-badge">{t("platforms.badge")}</span>
-        <h2 className="mt-4 text-3xl font-black tracking-tight text-ink-950 sm:text-5xl">
+        <h2 className="mt-4 text-3xl font-black tracking-tight text-ink-950 dark:text-slate-50 sm:text-5xl">
           {t("platforms.heading_1")}
           <span className="brand-text">{t("platforms.heading_2")}</span>
         </h2>
-        <p className="mx-auto mt-4 max-w-2xl text-base leading-7 text-slate-500">{t("platforms.sub")}</p>
+        <p className="mx-auto mt-4 max-w-2xl text-base leading-7 text-slate-500 dark:text-slate-400">{t("platforms.sub")}</p>
       </div>
 
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
@@ -75,8 +75,8 @@ export default function PlatformGallery() {
               >
                 {s.initial}
               </div>
-              <h3 className="relative font-black text-ink-950">{p.name}</h3>
-              <p className="relative mt-2 text-sm leading-6 text-slate-500">{p.desc}</p>
+              <h3 className="relative font-black text-ink-950 dark:text-slate-100">{p.name}</h3>
+              <p className="relative mt-2 text-sm leading-6 text-slate-500 dark:text-slate-400">{p.desc}</p>
             </a>
           );
         })}

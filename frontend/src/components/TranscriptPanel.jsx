@@ -39,9 +39,9 @@ export default function TranscriptPanel({
 
   if (!transcript) {
     return (
-      <div className="mx-auto w-full max-w-md rounded-2xl border border-indigo-100/80 bg-white/70 px-5 py-6 text-center shadow-sm shadow-indigo-100/30">
-        <p className="text-sm font-semibold text-slate-700">{t("understanding.transcript_empty_title")}</p>
-        <p className="mt-1.5 text-xs leading-relaxed text-slate-500">
+      <div className="mx-auto w-full max-w-md rounded-2xl border border-indigo-100/80 bg-white/70 px-5 py-6 text-center shadow-sm shadow-indigo-100/30 dark:border-brand-500/20 dark:bg-ink-950/50 dark:shadow-none">
+        <p className="text-sm font-semibold text-slate-700 dark:text-slate-200">{t("understanding.transcript_empty_title")}</p>
+        <p className="mt-1.5 text-xs leading-relaxed text-slate-500 dark:text-slate-400">
           {t("understanding.transcript_empty_hint")}
         </p>
         {onLoadTranscript && (
@@ -49,7 +49,7 @@ export default function TranscriptPanel({
             type="button"
             onClick={onLoadTranscript}
             disabled={loading}
-            className="mt-4 inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-indigo-200 bg-white px-4 py-2 text-sm font-semibold text-indigo-600 transition hover:border-indigo-300 hover:bg-indigo-50 disabled:cursor-not-allowed disabled:opacity-60"
+            className="mt-4 inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-indigo-200 bg-white px-4 py-2 text-sm font-semibold text-indigo-600 transition hover:border-indigo-300 hover:bg-indigo-50 disabled:cursor-not-allowed disabled:opacity-60 dark:border-brand-500/30 dark:bg-ink-900 dark:text-brand-300 dark:hover:border-brand-400/50 dark:hover:bg-brand-500/10"
           >
             {loading && <Spinner />}
             {loading ? t("understanding.transcript_loading_short") : t("understanding.load_transcript")}
@@ -67,14 +67,14 @@ export default function TranscriptPanel({
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder={t("understanding.search_transcript")}
-          className="min-h-11 flex-1 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm outline-none focus:border-indigo-400"
+          className="min-h-11 flex-1 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm outline-none focus:border-indigo-400 dark:border-white/10 dark:bg-ink-950 dark:text-slate-200 dark:focus:border-brand-400"
         />
         {onTranslate && (
           <button
             type="button"
             onClick={onTranslate}
             disabled={translating}
-            className="min-h-11 shrink-0 rounded-lg border border-fuchsia-200 px-3 py-2 text-sm font-medium text-fuchsia-600 hover:border-fuchsia-400 disabled:opacity-60"
+            className="min-h-11 shrink-0 rounded-lg border border-fuchsia-200 px-3 py-2 text-sm font-medium text-fuchsia-600 hover:border-fuchsia-400 disabled:opacity-60 dark:border-accent-500/30 dark:text-accent-300 dark:hover:border-accent-400/50"
           >
             {translating ? t("result.translating") : t("result.translate")}
           </button>
@@ -82,33 +82,33 @@ export default function TranscriptPanel({
       </div>
 
       {transcript.truncated && (
-        <p className="mb-2 text-xs text-amber-600">{t("understanding.truncated_hint")}</p>
+        <p className="mb-2 text-xs text-amber-600 dark:text-amber-300">{t("understanding.truncated_hint")}</p>
       )}
 
-      <div ref={listRef} className="max-h-96 overflow-y-auto rounded-xl border border-slate-100 bg-slate-50/50">
+      <div ref={listRef} className="max-h-96 overflow-y-auto rounded-xl border border-slate-100 bg-slate-50/50 dark:border-white/10 dark:bg-ink-950/50">
         {filtered.length === 0 ? (
-          <p className="py-6 text-center text-sm text-slate-400">{t("understanding.no_search_results")}</p>
+          <p className="py-6 text-center text-sm text-slate-400 dark:text-slate-500">{t("understanding.no_search_results")}</p>
         ) : (
-          <ul className="divide-y divide-slate-100">
+          <ul className="divide-y divide-slate-100 dark:divide-white/10">
             {filtered.map((cue) => (
               <li
                 key={cue.index}
                 id={`cue-${cue.index}`}
                 data-cue-index={cue.index}
-                className={`flex gap-3 px-3 py-2 text-sm hover:bg-white/80 ${
-                  highlightCueIndex === cue.index ? "bg-indigo-100/80 ring-1 ring-inset ring-indigo-300" : ""
+                className={`flex gap-3 px-3 py-2 text-sm hover:bg-white/80 dark:hover:bg-white/5 ${
+                  highlightCueIndex === cue.index ? "bg-indigo-100/80 ring-1 ring-inset ring-indigo-300 dark:bg-brand-500/20 dark:ring-brand-400/50" : ""
                 }`}
               >
-                <span className="shrink-0 font-mono text-xs text-indigo-500 pt-0.5">
+                <span className="shrink-0 font-mono text-xs text-indigo-500 pt-0.5 dark:text-brand-300">
                   [{formatCueTime(cue.start_sec)}]
                 </span>
-                <span className="text-slate-700">{cue.text}</span>
+                <span className="text-slate-700 dark:text-slate-300">{cue.text}</span>
               </li>
             ))}
           </ul>
         )}
       </div>
-      <p className="mt-2 text-xs text-slate-400">
+      <p className="mt-2 text-xs text-slate-400 dark:text-slate-500">
         {t("understanding.cue_count", { shown: filtered.length, total: cues.length })}
       </p>
     </div>

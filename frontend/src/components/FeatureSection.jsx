@@ -20,11 +20,11 @@ export default function FeatureSection() {
     <section id="features" className="mx-auto mt-24 max-w-6xl px-4 sm:px-6">
       <div className="mb-10 text-center">
         <span className="section-badge">{t("features.badge")}</span>
-        <h2 className="mt-4 text-3xl font-black tracking-tight text-ink-950 sm:text-5xl">
+        <h2 className="mt-4 text-3xl font-black tracking-tight text-ink-950 dark:text-slate-50 sm:text-5xl">
           {t("features.heading_1")}
           <span className="brand-text">{t("features.heading_2")}</span>
         </h2>
-        <p className="mx-auto mt-4 max-w-2xl text-base leading-7 text-slate-500">{t("features.sub")}</p>
+        <p className="mx-auto mt-4 max-w-2xl text-base leading-7 text-slate-500 dark:text-slate-400">{t("features.sub")}</p>
       </div>
 
       <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
@@ -43,17 +43,17 @@ export default function FeatureSection() {
                   className={`relative rounded-full px-3 py-1 text-xs font-black ${
                     isPro
                       ? "bg-gradient-to-r from-amber-400 to-orange-500 text-white"
-                      : "bg-emerald-100 text-emerald-600"
+                      : "bg-emerald-100 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-300"
                   }`}
                 >
                   {isPro ? t("features.pro") : t("features.free")}
                 </span>
               </div>
-              <h3 className="relative text-xl font-black text-ink-950">{f.title}</h3>
-              <p className="relative mt-3 text-sm leading-7 text-slate-500">{f.desc}</p>
+              <h3 className="relative text-xl font-black text-ink-950 dark:text-slate-100">{f.title}</h3>
+              <p className="relative mt-3 text-sm leading-7 text-slate-500 dark:text-slate-400">{f.desc}</p>
               {i === 2 && (
-                <div className="relative mt-6 rounded-2xl bg-slate-50 p-4">
-                  <div className="mb-3 flex items-center justify-between text-xs font-black uppercase tracking-[0.16em] text-slate-400">
+                <div className="relative mt-6 rounded-2xl bg-slate-50 p-4 dark:bg-ink-900/50">
+                  <div className="mb-3 flex items-center justify-between text-xs font-black uppercase tracking-[0.16em] text-slate-400 dark:text-slate-500">
                     <span>AI Output</span>
                     <span className="text-brand-600">Live</span>
                   </div>

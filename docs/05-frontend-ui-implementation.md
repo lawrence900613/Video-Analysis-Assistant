@@ -6,7 +6,7 @@
 
 ```text
 App.jsx
-├── Navbar.jsx              Top nav + language toggle + Upgrade Pro
+├── Navbar.jsx              Top nav + language toggle + theme toggle + Upgrade Pro
 ├── Hero.jsx                Hero: headline, URL input, trust stats, AI preview card
 ├── ResultCard.jsx          Parse result (conditional)
 │   └── SummarizeSSESection.jsx   AI understanding (summary / transcript / mind map / Q&A)
@@ -29,8 +29,9 @@ Design direction: **AI video knowledge workbench** — light mesh background + i
 
 | File | Role |
 | --- | --- |
-| [frontend/tailwind.config.js](../frontend/tailwind.config.js) | `brand` / `accent` / `neon` / `ink` palettes; `shadow-soft` / `shadow-glow`; animations |
-| [frontend/src/index.css](../frontend/src/index.css) | Global background glow, reusable utility classes |
+| [frontend/tailwind.config.js](../frontend/tailwind.config.js) | `brand` / `accent` / `neon` / `ink` palettes; `darkMode: "class"`; shadows and animations |
+| [frontend/src/index.css](../frontend/src/index.css) | Global background glow, CSS variables, reusable classes with `.dark` overrides |
+| [frontend/src/theme.jsx](../frontend/src/theme.jsx) | `ThemeProvider` + `useTheme()`; persists `localStorage.theme` |
 
 Common reusable classes:
 
@@ -50,6 +51,17 @@ Common reusable classes:
 - Language persistence: `localStorage.lang`; synced to `<html lang>`
 - Hero headline: localized via i18n (`hero.title` — e.g. zh: download/summarize/understand video; en: equivalent conversion copy)
 - Platform, feature, and pricing sections emphasize **AI summary / transcript / mind map / Q&A** value
+
+### 2.3 Theme / dark mode
+
+- Toggle: sun/moon button in [Navbar.jsx](../frontend/src/components/Navbar.jsx), next to the language switch
+- Modes: **Light** and **Dark** only (no system auto theme)
+- Persistence: `localStorage.theme` (`"light"` | `"dark"`); default `"light"`
+- Implementation: Tailwind `darkMode: "class"` on `<html class="dark">`; anti-flash inline script in [index.html](../frontend/index.html) runs before React paint
+- Styling strategy: semantic CSS variables + `.dark` overrides in [index.css](../frontend/src/index.css) for shared classes (`.card`, `.premium-panel`, etc.); component-level `dark:` utilities on landing, workbench, and AI panels
+- i18n keys: `theme.light`, `theme.dark`, `theme.toggle_aria`
+
+When adding new surfaces (cards, inputs, panels), update both light styles and `dark:` variants (or extend shared classes in `index.css`).
 
 ## 3. Hero
 

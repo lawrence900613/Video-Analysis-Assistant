@@ -12,7 +12,7 @@ function StreamingMarkdownPreview({ text }) {
   const lines = (text || "").split("\n").filter((_, i, arr) => i < arr.length - 1 || arr[i].trim());
 
   return (
-    <div className="space-y-2 text-sm leading-relaxed text-slate-700">
+    <div className="space-y-2 text-sm leading-relaxed text-slate-700 dark:text-slate-300">
       {lines.map((line, i) => {
         const trimmed = line.trim();
         if (!trimmed) return <div key={i} className="h-2" />;
@@ -20,7 +20,7 @@ function StreamingMarkdownPreview({ text }) {
         const h1 = trimmed.match(/^#\s+(.+)$/);
         if (h1) {
           return (
-            <p key={i} className="text-xs font-semibold uppercase tracking-wide text-indigo-600">
+            <p key={i} className="text-xs font-semibold uppercase tracking-wide text-indigo-600 dark:text-brand-300">
               {h1[1]}
             </p>
           );
@@ -31,11 +31,11 @@ function StreamingMarkdownPreview({ text }) {
           return (
             <div key={i} className="flex items-baseline gap-2 pt-1">
               {h2[1] && (
-                <span className="shrink-0 rounded bg-indigo-100 px-1.5 py-0.5 font-mono text-[10px] text-indigo-600">
+                <span className="shrink-0 rounded bg-indigo-100 px-1.5 py-0.5 font-mono text-[10px] text-indigo-600 dark:bg-brand-500/20 dark:text-brand-300">
                   {h2[1]}
                 </span>
               )}
-              <span className="font-semibold text-slate-800">{h2[2]}</span>
+              <span className="font-semibold text-slate-800 dark:text-slate-100">{h2[2]}</span>
             </div>
           );
         }
@@ -51,7 +51,7 @@ function StreamingMarkdownPreview({ text }) {
         }
 
         return (
-          <p key={i} className="text-slate-600">
+          <p key={i} className="text-slate-600 dark:text-slate-400">
             {trimmed}
           </p>
         );
@@ -70,7 +70,7 @@ function SummarySections({ summary, streaming, t, showRawPreview, rawText }) {
   if (!hasContent) {
     if (streaming && rawText?.trim()) {
       return (
-        <div className="rounded-xl border border-indigo-100/80 bg-white/60 p-4 backdrop-blur-sm">
+        <div className="rounded-xl border border-indigo-100/80 bg-white/60 p-4 backdrop-blur-sm dark:border-brand-500/20 dark:bg-ink-950/50">
           <StreamingMarkdownPreview text={rawText} />
         </div>
       );
@@ -78,13 +78,13 @@ function SummarySections({ summary, streaming, t, showRawPreview, rawText }) {
 
     if (streaming) {
       return (
-        <div className="rounded-xl border border-dashed border-indigo-200/80 bg-indigo-50/30 p-5">
+        <div className="rounded-xl border border-dashed border-indigo-200/80 bg-indigo-50/30 p-5 dark:border-brand-500/30 dark:bg-brand-500/10">
           <div className="flex items-center gap-3">
             <ShimmerBlock />
             <div className="flex-1 space-y-2">
-              <div className="h-3 w-3/4 animate-pulse rounded bg-indigo-100" />
-              <div className="h-3 w-1/2 animate-pulse rounded bg-indigo-100/70" />
-              <p className="text-sm text-indigo-600/80">{t("understanding.stage_streaming")}</p>
+              <div className="h-3 w-3/4 animate-pulse rounded bg-indigo-100 dark:bg-brand-500/20" />
+              <div className="h-3 w-1/2 animate-pulse rounded bg-indigo-100/70 dark:bg-brand-500/15" />
+              <p className="text-sm text-indigo-600/80 dark:text-brand-300/80">{t("understanding.stage_streaming")}</p>
             </div>
           </div>
         </div>
@@ -92,9 +92,9 @@ function SummarySections({ summary, streaming, t, showRawPreview, rawText }) {
     }
 
     return (
-      <div className="mx-auto w-full max-w-md rounded-2xl border border-dashed border-indigo-200/70 bg-white/60 px-5 py-6 text-center">
-        <p className="text-sm font-semibold text-slate-600">{t("understanding.summary_empty")}</p>
-        <p className="mt-1.5 break-words text-xs leading-relaxed text-slate-400">
+      <div className="mx-auto w-full max-w-md rounded-2xl border border-dashed border-indigo-200/70 bg-white/60 px-5 py-6 text-center dark:border-brand-500/30 dark:bg-ink-950/50">
+        <p className="text-sm font-semibold text-slate-600 dark:text-slate-300">{t("understanding.summary_empty")}</p>
+        <p className="mt-1.5 break-words text-xs leading-relaxed text-slate-400 dark:text-slate-500">
           {t("understanding.empty_state_hint")}
         </p>
       </div>
@@ -104,11 +104,11 @@ function SummarySections({ summary, streaming, t, showRawPreview, rawText }) {
   return (
     <div className={`space-y-5 ${streaming ? "animate-fade-up" : ""}`}>
       {summary.tldr && (
-        <div className="rounded-xl border border-indigo-100 bg-indigo-50/50 p-4 transition-all duration-300">
-          <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-indigo-600">
+        <div className="rounded-xl border border-indigo-100 bg-indigo-50/50 p-4 transition-all duration-300 dark:border-brand-500/20 dark:bg-brand-500/10">
+          <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-indigo-600 dark:text-brand-300">
             {t("understanding.tldr")}
           </p>
-          <p className="text-sm leading-relaxed text-slate-800">
+          <p className="text-sm leading-relaxed text-slate-800 dark:text-slate-200">
             {summary.tldr}
             {streaming && !summary.key_points?.length && !summary.chapters?.length && <TypingCursor />}
           </p>
@@ -117,12 +117,12 @@ function SummarySections({ summary, streaming, t, showRawPreview, rawText }) {
 
       {summary.key_points?.length > 0 && (
         <div className="animate-fade-up">
-          <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-400">
+          <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-400 dark:text-slate-500">
             {t("understanding.key_points")}
           </p>
           <ul className="space-y-2">
             {summary.key_points.map((pt, i) => (
-              <li key={i} className="flex gap-2 text-sm text-slate-700">
+              <li key={i} className="flex gap-2 text-sm text-slate-700 dark:text-slate-300">
                 <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-indigo-400" />
                 <span>
                   {pt}
@@ -138,25 +138,25 @@ function SummarySections({ summary, streaming, t, showRawPreview, rawText }) {
 
       {summary.chapters?.length > 0 && (
         <div className="animate-fade-up">
-          <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-400">
+          <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-400 dark:text-slate-500">
             {t("understanding.chapters")}
           </p>
           <div className="space-y-3">
             {summary.chapters.map((ch, i) => (
               <div
                 key={i}
-                className="rounded-lg border border-slate-100 bg-slate-50/80 px-4 py-3 transition-all duration-300 hover:border-indigo-100 hover:bg-indigo-50/30"
+                className="rounded-lg border border-slate-100 bg-slate-50/80 px-4 py-3 transition-all duration-300 hover:border-indigo-100 hover:bg-indigo-50/30 dark:border-white/10 dark:bg-ink-950/50 dark:hover:border-brand-500/30 dark:hover:bg-brand-500/10"
               >
                 <div className="flex items-baseline gap-2">
                   {ch.start_label && (
-                    <span className="shrink-0 rounded bg-slate-200 px-1.5 py-0.5 font-mono text-xs text-slate-600">
+                    <span className="shrink-0 rounded bg-slate-200 px-1.5 py-0.5 font-mono text-xs text-slate-600 dark:bg-white/10 dark:text-slate-300">
                       {ch.start_label}
                     </span>
                   )}
-                  <span className="text-sm font-semibold text-slate-800">{ch.title}</span>
+                  <span className="text-sm font-semibold text-slate-800 dark:text-slate-100">{ch.title}</span>
                 </div>
                 {ch.summary && (
-                  <p className="mt-1 text-sm leading-relaxed text-slate-600">
+                  <p className="mt-1 text-sm leading-relaxed text-slate-600 dark:text-slate-400">
                     {ch.summary}
                     {streaming && i === summary.chapters.length - 1 && <TypingCursor />}
                   </p>
@@ -196,14 +196,14 @@ export default function SummaryPanel({
 }) {
   if (!summary && !streamingText && !streaming) {
     return (
-      <div className="mx-auto w-full max-w-md rounded-2xl border border-dashed border-indigo-200/70 bg-white/60 px-5 py-8 text-center sm:px-6">
-        <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-100 to-violet-100 text-indigo-400 shadow-inner">
+      <div className="mx-auto w-full max-w-md rounded-2xl border border-dashed border-indigo-200/70 bg-white/60 px-5 py-8 text-center sm:px-6 dark:border-brand-500/30 dark:bg-ink-950/50">
+        <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-100 to-violet-100 text-indigo-400 shadow-inner dark:from-brand-500/20 dark:to-accent-500/20 dark:text-brand-300">
           <svg viewBox="0 0 24 24" className="h-6 w-6 shrink-0" fill="none" stroke="currentColor" strokeWidth="1.5">
             <path strokeLinecap="round" d="M9 12h6M9 16h4M7 20h10a2 2 0 002-2V8l-2-2H9L7 8v10a2 2 0 002 2z" />
           </svg>
         </div>
-        <p className="text-sm font-semibold text-slate-600">{t("understanding.summary_empty")}</p>
-        <p className="mt-1.5 break-words text-xs leading-relaxed text-slate-400">
+        <p className="text-sm font-semibold text-slate-600 dark:text-slate-300">{t("understanding.summary_empty")}</p>
+        <p className="mt-1.5 break-words text-xs leading-relaxed text-slate-400 dark:text-slate-500">
           {t("understanding.empty_state_hint")}
         </p>
       </div>
@@ -228,13 +228,13 @@ export default function SummaryPanel({
   return (
     <div className="space-y-4">
       {streaming && !summary && !hideLiveHeader && (
-        <p className="text-xs font-semibold uppercase tracking-wide text-indigo-600">
+        <p className="text-xs font-semibold uppercase tracking-wide text-indigo-600 dark:text-brand-300">
           {t("understanding.streaming_label")}
         </p>
       )}
 
       {waitingForMap && (
-        <div className="flex items-center gap-2 rounded-lg bg-indigo-50/60 px-3 py-2 text-sm text-indigo-700">
+        <div className="flex items-center gap-2 rounded-lg bg-indigo-50/60 px-3 py-2 text-sm text-indigo-700 dark:bg-brand-500/10 dark:text-brand-200">
           <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-indigo-500" />
           {stage.name === "map" && stage.chunk_current != null
             ? t("understanding.stage_map_progress", {
@@ -248,7 +248,7 @@ export default function SummaryPanel({
       )}
 
       {waitingForTokens && (
-        <div className="flex items-center gap-2 rounded-lg bg-violet-50/60 px-3 py-2 text-sm text-violet-700">
+        <div className="flex items-center gap-2 rounded-lg bg-violet-50/60 px-3 py-2 text-sm text-violet-700 dark:bg-accent-500/10 dark:text-accent-200">
           <span className="inline-flex gap-0.5">
             {[0, 1, 2].map((i) => (
               <span

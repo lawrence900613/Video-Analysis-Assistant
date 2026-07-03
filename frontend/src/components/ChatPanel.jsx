@@ -133,7 +133,7 @@ export default function ChatPanel({
 
   if (!transcript) {
     return (
-      <p className="py-8 text-center text-sm text-slate-400">{t("understanding.chat_need_transcript")}</p>
+      <p className="py-8 text-center text-sm text-slate-400 dark:text-slate-500">{t("understanding.chat_need_transcript")}</p>
     );
   }
 
@@ -142,12 +142,12 @@ export default function ChatPanel({
       <div
         ref={messagesRef}
         onScroll={handleMessagesScroll}
-        className="mb-3 max-h-[420px] min-h-[280px] overflow-y-auto rounded-xl border border-indigo-100/80 bg-slate-50/40 p-3"
+        className="mb-3 max-h-[420px] min-h-[280px] overflow-y-auto rounded-xl border border-indigo-100/80 bg-slate-50/40 p-3 dark:border-brand-500/20 dark:bg-ink-950/50"
       >
         {messages.length === 0 && !streaming && (
           <div className="flex h-full min-h-[240px] flex-col items-center justify-center text-center">
-            <p className="text-sm font-semibold text-slate-700">{t("understanding.chat_empty_title")}</p>
-            <p className="mt-1.5 max-w-sm text-xs text-slate-500">{t("understanding.chat_empty_hint")}</p>
+            <p className="text-sm font-semibold text-slate-700 dark:text-slate-200">{t("understanding.chat_empty_title")}</p>
+            <p className="mt-1.5 max-w-sm text-xs text-slate-500 dark:text-slate-400">{t("understanding.chat_empty_hint")}</p>
           </div>
         )}
 
@@ -165,7 +165,7 @@ export default function ChatPanel({
           )}
 
           {streaming && !streamingText && (
-            <div className="flex items-center gap-2 text-xs text-indigo-500">
+            <div className="flex items-center gap-2 text-xs text-indigo-500 dark:text-brand-300">
               <TypingDots /> {t("understanding.chat_thinking")}
             </div>
           )}
@@ -173,7 +173,7 @@ export default function ChatPanel({
       </div>
 
       {error && (
-        <p className="mb-2 rounded-lg bg-red-50 px-3 py-2 text-xs text-red-600">{error}</p>
+        <p className="mb-2 rounded-lg bg-red-50 px-3 py-2 text-xs text-red-600 dark:bg-red-950/40 dark:text-red-300">{error}</p>
       )}
 
       <div className="flex gap-2">
@@ -184,7 +184,7 @@ export default function ChatPanel({
           disabled={streaming}
           rows={2}
           placeholder={t("understanding.chat_placeholder")}
-          className="min-h-11 flex-1 resize-none rounded-xl border border-indigo-100 bg-white px-3 py-2.5 text-sm outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 disabled:opacity-60"
+          className="min-h-11 flex-1 resize-none rounded-xl border border-indigo-100 bg-white px-3 py-2.5 text-sm outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 disabled:opacity-60 dark:border-white/10 dark:bg-ink-950 dark:text-slate-200 dark:focus:border-brand-400 dark:focus:ring-brand-500/20"
         />
         <button
           type="button"
@@ -208,20 +208,20 @@ function MessageBubble({ message, onCitationClick }) {
         className={`max-w-[85%] rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed ${
           isUser
             ? "brand-gradient text-white shadow-md shadow-indigo-200"
-            : "border border-indigo-100/80 bg-white text-slate-700 shadow-sm"
+            : "border border-indigo-100/80 bg-white text-slate-700 shadow-sm dark:border-white/10 dark:bg-ink-900 dark:text-slate-200"
         }`}
       >
         <p className="whitespace-pre-wrap break-words">{message.content}</p>
         {message.streaming && <span className="ml-0.5 inline-block animate-pulse text-indigo-400">▍</span>}
 
         {!isUser && message.citations?.length > 0 && (
-          <div className="mt-2 flex flex-wrap gap-1.5 border-t border-indigo-50 pt-2">
+          <div className="mt-2 flex flex-wrap gap-1.5 border-t border-indigo-50 pt-2 dark:border-white/10">
             {message.citations.map((cite, i) => (
               <button
                 key={`${cite.cue_index}-${i}`}
                 type="button"
                 onClick={() => onCitationClick?.(cite)}
-                className="rounded-md bg-indigo-50 px-2 py-0.5 text-xs font-medium text-indigo-600 hover:bg-indigo-100"
+                className="rounded-md bg-indigo-50 px-2 py-0.5 text-xs font-medium text-indigo-600 hover:bg-indigo-100 dark:bg-brand-500/20 dark:text-brand-300 dark:hover:bg-brand-500/30"
                 title={cite.quote}
               >
                 [{formatCueTime(cite.start_sec)}]

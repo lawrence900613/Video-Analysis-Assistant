@@ -8,6 +8,22 @@
   --electric: #176bff;
   --hot: #ff2f87;
   --cyan: #35d5ff;
+  --page-bg-base: #f6f8fb;
+  --surface: rgba(255, 255, 255, 0.9);
+  --surface-muted: rgba(255, 255, 255, 0.75);
+  --text-primary: #1e293b;
+  --text-muted: #64748b;
+  --border-subtle: rgba(15, 23, 42, 0.08);
+}
+
+html.dark {
+  color-scheme: dark;
+  --page-bg-base: #08111f;
+  --surface: rgba(16, 24, 39, 0.85);
+  --surface-muted: rgba(16, 24, 39, 0.72);
+  --text-primary: #f1f5f9;
+  --text-muted: #94a3b8;
+  --border-subtle: rgba(255, 255, 255, 0.1);
 }
 
 html {
@@ -20,13 +36,24 @@ html.page-scroll-anchor-disabled body {
 }
 
 body {
-  @apply bg-slate-50 text-slate-800 antialiased;
+  @apply antialiased;
+  color: var(--text-primary);
+  background-color: var(--page-bg-base);
   background-image:
     radial-gradient(900px 520px at 14% -10%, rgba(53, 213, 255, 0.2), transparent 62%),
     radial-gradient(760px 460px at 86% 2%, rgba(255, 47, 135, 0.17), transparent 60%),
     radial-gradient(660px 420px at 50% 36%, rgba(23, 107, 255, 0.11), transparent 64%),
     linear-gradient(180deg, #f8fbff 0%, #f6f8fb 44%, #eef4ff 100%);
   background-attachment: fixed;
+}
+
+html.dark body {
+  @apply text-slate-100;
+  background-image:
+    radial-gradient(900px 520px at 14% -10%, rgba(53, 213, 255, 0.12), transparent 62%),
+    radial-gradient(760px 460px at 86% 2%, rgba(255, 47, 135, 0.1), transparent 60%),
+    radial-gradient(660px 420px at 50% 36%, rgba(23, 107, 255, 0.08), transparent 64%),
+    linear-gradient(180deg, #0a1220 0%, #08111f 44%, #060d18 100%);
 }
 
 @layer components {
@@ -37,19 +64,29 @@ body {
     @apply bg-gradient-to-r from-brand-600 via-accent-500 to-neon-500 bg-clip-text text-transparent;
   }
   .card {
-    @apply rounded-[1.5rem] bg-white/90 shadow-soft ring-1 ring-slate-900/5 backdrop-blur transition duration-300;
+    @apply rounded-[1.5rem] shadow-soft ring-1 backdrop-blur transition duration-300;
+    @apply bg-white/90 ring-slate-900/5;
+    @apply dark:bg-ink-900/80 dark:ring-white/10;
   }
   .section-badge {
-    @apply inline-flex items-center gap-2 rounded-full border border-brand-200/70 bg-white/80 px-3.5 py-1.5 text-xs font-bold uppercase tracking-[0.18em] text-brand-700 shadow-sm shadow-brand-100/60;
+    @apply inline-flex items-center gap-2 rounded-full border px-3.5 py-1.5 text-xs font-bold uppercase tracking-[0.18em] shadow-sm;
+    @apply border-brand-200/70 bg-white/80 text-brand-700 shadow-brand-100/60;
+    @apply dark:border-brand-500/30 dark:bg-ink-900/70 dark:text-brand-300 dark:shadow-none;
   }
   .search-box {
-    @apply rounded-[1.35rem] border border-white/80 bg-white/90 shadow-2xl shadow-brand-200/30 ring-1 ring-slate-900/5 backdrop-blur-xl sm:rounded-full;
+    @apply rounded-[1.35rem] border shadow-2xl ring-1 backdrop-blur-xl sm:rounded-full;
+    @apply border-white/80 bg-white/90 shadow-brand-200/30 ring-slate-900/5;
+    @apply dark:border-white/10 dark:bg-ink-900/80 dark:shadow-brand-500/10 dark:ring-white/10;
   }
   .premium-panel {
-    @apply rounded-[2rem] border border-white/70 bg-white/75 shadow-glow ring-1 ring-slate-900/5 backdrop-blur-2xl;
+    @apply rounded-[2rem] border shadow-glow ring-1 backdrop-blur-2xl;
+    @apply border-white/70 bg-white/75 ring-slate-900/5;
+    @apply dark:border-white/10 dark:bg-ink-900/75 dark:ring-white/10 dark:shadow-brand-500/15;
   }
   .dark-panel {
-    @apply rounded-[2rem] border border-white/10 bg-ink-950 text-white shadow-2xl shadow-ink-950/25;
+    @apply rounded-[2rem] border bg-ink-950 text-white shadow-2xl shadow-ink-950/25;
+    @apply border-white/10;
+    @apply dark:border-white/15 dark:shadow-brand-500/10;
     background-image:
       radial-gradient(480px 260px at 20% 0%, rgba(53, 213, 255, 0.24), transparent 62%),
       radial-gradient(460px 240px at 92% 18%, rgba(255, 47, 135, 0.26), transparent 58%),
@@ -59,10 +96,14 @@ body {
     @apply brand-gradient rounded-2xl px-5 py-3 text-sm font-black text-white shadow-xl shadow-accent-400/30 transition hover:-translate-y-0.5 hover:shadow-accent-400/40 disabled:cursor-not-allowed disabled:opacity-70;
   }
   .soft-button {
-    @apply rounded-2xl border border-slate-200/80 bg-white px-5 py-3 text-sm font-bold text-slate-700 shadow-sm transition hover:-translate-y-0.5 hover:border-brand-300 hover:text-brand-700 hover:shadow-brand-100;
+    @apply rounded-2xl border px-5 py-3 text-sm font-bold shadow-sm transition hover:-translate-y-0.5;
+    @apply border-slate-200/80 bg-white text-slate-700 hover:border-brand-300 hover:text-brand-700 hover:shadow-brand-100;
+    @apply dark:border-white/10 dark:bg-ink-900/80 dark:text-slate-200 dark:hover:border-brand-400/40 dark:hover:text-brand-300 dark:hover:shadow-brand-500/10;
   }
   .mobile-dock {
-    @apply fixed bottom-0 left-0 right-0 z-40 border-t border-slate-200/70 bg-white/90 p-3 shadow-2xl shadow-ink-950/10 backdrop-blur-xl;
+    @apply fixed bottom-0 left-0 right-0 z-40 border-t p-3 shadow-2xl backdrop-blur-xl;
+    @apply border-slate-200/70 bg-white/90 shadow-ink-950/10;
+    @apply dark:border-white/10 dark:bg-ink-950/90 dark:shadow-black/30;
   }
   .stream-panel-glow {
     @apply shadow-lg shadow-accent-200/40;
@@ -83,6 +124,11 @@ body {
       linear-gradient(90deg, rgba(15, 23, 42, 0.045) 1px, transparent 1px);
     background-size: 34px 34px;
   }
+  html.dark .mesh-grid {
+    background-image:
+      linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+  }
 }
 
 ::-webkit-scrollbar {
@@ -90,4 +136,7 @@ body {
 }
 ::-webkit-scrollbar-thumb {
   @apply rounded-full bg-slate-300;
+}
+html.dark ::-webkit-scrollbar-thumb {
+  @apply bg-slate-600;
 }

@@ -61,9 +61,9 @@ export default function StreamingProgress({ stage, lang = "zh", t }) {
   ];
 
   return (
-    <div className="mb-5 overflow-hidden rounded-2xl border border-indigo-100/80 bg-white/90 p-4 shadow-sm shadow-indigo-100/50">
+    <div className="mb-5 overflow-hidden rounded-2xl border border-indigo-100/80 bg-white/90 p-4 shadow-sm shadow-indigo-100/50 dark:border-brand-500/20 dark:bg-ink-900/80 dark:shadow-brand-500/10">
       <div className="relative mb-4">
-        <div className="absolute left-[calc(16.666%_-_18px)] right-[calc(16.666%_-_18px)] top-[18px] hidden h-0.5 overflow-hidden rounded-full bg-indigo-100 sm:block">
+        <div className="absolute left-[calc(16.666%_-_18px)] right-[calc(16.666%_-_18px)] top-[18px] hidden h-0.5 overflow-hidden rounded-full bg-indigo-100 dark:bg-white/10 sm:block">
           <div
             className="brand-gradient h-full rounded-full transition-all duration-700 ease-out"
             style={{ width: `${topProgress}%` }}
@@ -83,8 +83,8 @@ export default function StreamingProgress({ stage, lang = "zh", t }) {
                     isDone
                       ? "brand-gradient text-white shadow-md shadow-indigo-200"
                       : isActive
-                        ? "bg-indigo-50 text-indigo-600 ring-2 ring-indigo-400 ring-offset-2"
-                        : "bg-slate-50 text-slate-400 ring-1 ring-slate-200"
+                        ? "bg-indigo-50 text-indigo-600 ring-2 ring-indigo-400 ring-offset-2 dark:bg-brand-500/20 dark:text-brand-300 dark:ring-brand-400 dark:ring-offset-ink-950"
+                        : "bg-slate-50 text-slate-400 ring-1 ring-slate-200 dark:bg-white/5 dark:text-slate-500 dark:ring-white/10"
                   }`}
                 >
                   {isDone ? (
@@ -101,7 +101,7 @@ export default function StreamingProgress({ stage, lang = "zh", t }) {
                 </span>
                 <span
                   className={`max-w-[5.5rem] truncate text-center text-[11px] font-semibold leading-tight sm:max-w-none ${
-                    isDone ? "text-indigo-600" : isActive ? "text-indigo-700" : isPending ? "text-slate-400" : "text-slate-500"
+                    isDone ? "text-indigo-600 dark:text-brand-300" : isActive ? "text-indigo-700 dark:text-brand-200" : isPending ? "text-slate-400 dark:text-slate-500" : "text-slate-500 dark:text-slate-400"
                   }`}
                 >
                   {stepLabels[i]}
@@ -114,10 +114,10 @@ export default function StreamingProgress({ stage, lang = "zh", t }) {
 
       <div className="space-y-2">
         <div className="flex items-center justify-between gap-2 text-xs">
-          <span className="font-medium text-indigo-700">{detail}</span>
-          <span className="tabular-nums text-slate-400">{progress}%</span>
+          <span className="font-medium text-indigo-700 dark:text-brand-300">{detail}</span>
+          <span className="tabular-nums text-slate-400 dark:text-slate-500">{progress}%</span>
         </div>
-        <div className="relative h-2 overflow-hidden rounded-full bg-indigo-100/80">
+        <div className="relative h-2 overflow-hidden rounded-full bg-indigo-100/80 dark:bg-white/10">
           <div
             className="brand-gradient relative h-full rounded-full transition-all duration-500 ease-out"
             style={{ width: `${progress}%` }}

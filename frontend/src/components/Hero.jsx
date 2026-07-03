@@ -19,22 +19,22 @@ export default function Hero({ url, setUrl, onParse, loading, error, flowStep = 
 
       <div className="relative mx-auto grid max-w-6xl items-center gap-10 px-4 sm:px-6 lg:grid-cols-[1.05fr_0.95fr]">
         <div className="text-center lg:text-left">
-          <div className="mb-5 inline-flex animate-fade-up items-center gap-2 rounded-full border border-white/80 bg-white/75 px-4 py-2 text-xs font-black uppercase tracking-[0.16em] text-brand-700 shadow-sm backdrop-blur">
+          <div className="mb-5 inline-flex animate-fade-up items-center gap-2 rounded-full border border-white/80 bg-white/75 px-4 py-2 text-xs font-black uppercase tracking-[0.16em] text-brand-700 shadow-sm backdrop-blur dark:border-white/10 dark:bg-ink-900/70 dark:text-brand-300">
             <span className="flex h-2.5 w-2.5 rounded-full bg-emerald-400 shadow-lg shadow-emerald-300" />
             {t("hero.badge")}
           </div>
 
-          <h1 className="animate-fade-up text-4xl font-black leading-[0.98] tracking-[-0.05em] text-ink-950 sm:text-6xl lg:text-7xl">
+          <h1 className="animate-fade-up text-4xl font-black leading-[0.98] tracking-[-0.05em] text-ink-950 dark:text-slate-50 sm:text-6xl lg:text-7xl">
             {t("hero.title_pre")}
             <span className="brand-text">{t("hero.title_highlight")}</span>
             {t("hero.title_post")}
           </h1>
 
-          <p className="mx-auto mt-6 max-w-2xl animate-fade-up text-base leading-8 text-slate-600 sm:text-lg lg:mx-0">
+          <p className="mx-auto mt-6 max-w-2xl animate-fade-up text-base leading-8 text-slate-600 dark:text-slate-400 sm:text-lg lg:mx-0">
             {t("hero.sub_1")}
-            <span className="font-black text-ink-950">{t("hero.sub_ai")}</span>
+            <span className="font-black text-ink-950 dark:text-slate-100">{t("hero.sub_ai")}</span>
             {t("hero.sub_2")}
-            <span className="font-black text-ink-950">{t("hero.sub_translate")}</span>
+            <span className="font-black text-ink-950 dark:text-slate-100">{t("hero.sub_translate")}</span>
             {t("hero.sub_3")}
           </p>
 
@@ -43,7 +43,7 @@ export default function Hero({ url, setUrl, onParse, loading, error, flowStep = 
             className="search-box mx-auto mt-8 flex max-w-2xl animate-fade-scale flex-col gap-3 p-2 sm:flex-row sm:items-center lg:mx-0"
           >
             <div className="flex flex-1 items-center gap-3 px-3 py-2.5 sm:py-0">
-              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-brand-50 text-brand-600">
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-brand-50 text-brand-600 dark:bg-brand-500/20 dark:text-brand-300">
                 <LinkIcon />
               </span>
               <input
@@ -51,7 +51,7 @@ export default function Hero({ url, setUrl, onParse, loading, error, flowStep = 
                 value={url}
                 onChange={(e) => setUrl(e.target.value)}
                 placeholder={t("hero.placeholder")}
-                className="w-full bg-transparent text-sm font-medium text-slate-800 outline-none placeholder:text-slate-400"
+                className="w-full bg-transparent text-sm font-medium text-slate-800 outline-none placeholder:text-slate-400 dark:text-slate-100 dark:placeholder:text-slate-500"
               />
             </div>
             <button
@@ -72,15 +72,15 @@ export default function Hero({ url, setUrl, onParse, loading, error, flowStep = 
           </form>
 
           {error && (
-            <p className="mx-auto mt-4 max-w-2xl rounded-2xl border border-red-100 bg-red-50 px-4 py-3 text-sm font-medium text-red-600 lg:mx-0">
+            <p className="mx-auto mt-4 max-w-2xl rounded-2xl border border-red-100 bg-red-50 px-4 py-3 text-sm font-medium text-red-600 dark:border-red-500/30 dark:bg-red-950/40 dark:text-red-300 lg:mx-0">
               {error}
             </p>
           )}
 
           <div className="mt-6 grid animate-fade-up gap-3 sm:grid-cols-3">
             {trustItems.map((item) => (
-              <div key={item.value} className="rounded-2xl border border-white/80 bg-white/65 p-4 text-left shadow-sm backdrop-blur">
-                <p className="text-xl font-black text-ink-950">{item.value}</p>
+              <div key={item.value} className="rounded-2xl border border-white/80 bg-white/65 p-4 text-left shadow-sm backdrop-blur dark:border-white/10 dark:bg-ink-900/60">
+                <p className="text-xl font-black text-ink-950 dark:text-slate-100">{item.value}</p>
                 <p className="mt-1 text-xs font-bold uppercase tracking-[0.12em] text-slate-400">{item.label}</p>
               </div>
             ))}
@@ -90,9 +90,9 @@ export default function Hero({ url, setUrl, onParse, loading, error, flowStep = 
         <HeroPreview t={t} />
       </div>
 
-      <div className="relative mx-auto mt-8 flex max-w-6xl flex-wrap items-center justify-center gap-2 px-4 text-xs font-bold text-slate-500 sm:px-6">
+      <div className="relative mx-auto mt-8 flex max-w-6xl flex-wrap items-center justify-center gap-2 px-4 text-xs font-bold text-slate-500 dark:text-slate-400 sm:px-6">
         {PLATFORMS.map((p) => (
-          <span key={p} className="rounded-full border border-white/80 bg-white/65 px-3 py-1.5 shadow-sm backdrop-blur">{p}</span>
+          <span key={p} className="rounded-full border border-white/80 bg-white/65 px-3 py-1.5 shadow-sm backdrop-blur dark:border-white/10 dark:bg-ink-900/60">{p}</span>
         ))}
       </div>
     </section>

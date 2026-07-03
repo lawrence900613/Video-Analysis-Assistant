@@ -40,24 +40,24 @@ export default function MindMapPanel({
       <div className="flex flex-col items-center justify-center py-16">
         <div className="relative mb-4 flex h-12 w-12 items-center justify-center">
           <span className="absolute inset-0 animate-ping rounded-full bg-indigo-200 opacity-40" />
-          <span className="relative flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-50 text-indigo-500">
+          <span className="relative flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-50 text-indigo-500 dark:bg-brand-500/20 dark:text-brand-300">
             <Spinner />
           </span>
         </div>
-        <p className="text-sm font-medium text-indigo-700">{t("understanding.mindmap_loading")}</p>
+        <p className="text-sm font-medium text-indigo-700 dark:text-brand-300">{t("understanding.mindmap_loading")}</p>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="rounded-xl border border-red-100 bg-red-50 px-4 py-6 text-center">
-        <p className="text-sm text-red-600">{error}</p>
+      <div className="rounded-xl border border-red-100 bg-red-50 px-4 py-6 text-center dark:border-red-500/30 dark:bg-red-950/40">
+        <p className="text-sm text-red-600 dark:text-red-300">{error}</p>
         {canGenerate && (
           <button
             type="button"
             onClick={onGenerate}
-            className="mt-4 rounded-lg border border-indigo-200 bg-white px-4 py-2 text-sm font-semibold text-indigo-600 hover:bg-indigo-50"
+            className="mt-4 rounded-lg border border-indigo-200 bg-white px-4 py-2 text-sm font-semibold text-indigo-600 hover:bg-indigo-50 dark:border-brand-500/30 dark:bg-ink-900 dark:text-brand-300 dark:hover:bg-brand-500/10"
           >
             {t("understanding.mindmap_retry")}
           </button>
@@ -68,9 +68,9 @@ export default function MindMapPanel({
 
   if (!markdown) {
     return (
-      <div className="rounded-xl border border-dashed border-indigo-200/70 bg-white/60 px-5 py-10 text-center">
-        <p className="text-sm font-semibold text-slate-700">{t("understanding.mindmap_empty_title")}</p>
-        <p className="mt-1.5 text-xs text-slate-500">{t("understanding.mindmap_empty_hint")}</p>
+      <div className="rounded-xl border border-dashed border-indigo-200/70 bg-white/60 px-5 py-10 text-center dark:border-brand-500/30 dark:bg-ink-950/50">
+        <p className="text-sm font-semibold text-slate-700 dark:text-slate-200">{t("understanding.mindmap_empty_title")}</p>
+        <p className="mt-1.5 text-xs text-slate-500 dark:text-slate-400">{t("understanding.mindmap_empty_hint")}</p>
         {canGenerate && (
           <button
             type="button"
@@ -87,20 +87,20 @@ export default function MindMapPanel({
   return (
     <div>
       <div className="mb-3 flex items-center justify-between gap-2">
-        <p className="text-xs text-slate-500">{t("understanding.mindmap_hint")}</p>
+        <p className="text-xs text-slate-500 dark:text-slate-400">{t("understanding.mindmap_hint")}</p>
         {canGenerate && (
           <button
             type="button"
             onClick={onGenerate}
             disabled={loading}
-            className="shrink-0 rounded-lg border border-indigo-200 px-3 py-1.5 text-xs font-medium text-indigo-600 hover:bg-indigo-50 disabled:opacity-50"
+            className="shrink-0 rounded-lg border border-indigo-200 px-3 py-1.5 text-xs font-medium text-indigo-600 hover:bg-indigo-50 disabled:opacity-50 dark:border-brand-500/30 dark:text-brand-300 dark:hover:bg-brand-500/10"
           >
             {t("understanding.mindmap_regenerate")}
           </button>
         )}
       </div>
-      <div className="overflow-hidden rounded-xl border border-indigo-100/80 bg-gradient-to-br from-indigo-50/30 via-white to-violet-50/20">
-        <svg ref={svgRef} className="h-[420px] w-full" />
+      <div className="overflow-hidden rounded-xl border border-indigo-100/80 bg-gradient-to-br from-indigo-50/30 via-white to-violet-50/20 dark:border-brand-500/20 dark:from-ink-950 dark:via-ink-900 dark:to-ink-950">
+        <svg ref={svgRef} className="h-[420px] w-full dark:bg-ink-900" />
       </div>
     </div>
   );

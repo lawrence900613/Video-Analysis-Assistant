@@ -10,7 +10,7 @@ export default function FaqSection() {
     <section id="faq" className="mx-auto mt-16 max-w-3xl px-4 sm:px-6">
       <div className="mb-8 text-center">
         <span className="section-badge">{t("faq.badge")}</span>
-        <h2 className="mt-3 text-2xl font-extrabold text-slate-900 sm:text-3xl">{t("faq.heading")}</h2>
+        <h2 className="mt-3 text-2xl font-extrabold text-slate-900 dark:text-slate-100 sm:text-3xl">{t("faq.heading")}</h2>
       </div>
 
       <div className="space-y-3">
@@ -23,7 +23,7 @@ export default function FaqSection() {
                 onClick={() => setOpen(isOpen ? -1 : i)}
                 className="flex w-full items-center justify-between gap-4 px-5 py-4 text-left"
               >
-                <span className="text-sm font-semibold text-slate-800 sm:text-base">{item.q}</span>
+                <span className="text-sm font-semibold text-slate-800 dark:text-slate-100 sm:text-base">{item.q}</span>
                 <svg
                   viewBox="0 0 24 24"
                   className={`h-5 w-5 shrink-0 text-slate-400 transition ${isOpen ? "rotate-180" : ""}`}
@@ -35,7 +35,7 @@ export default function FaqSection() {
                 </svg>
               </button>
               {isOpen && (
-                <div className="border-t border-slate-100 px-5 py-4 text-sm leading-relaxed text-slate-600">
+                <div className="border-t border-slate-100 px-5 py-4 text-sm leading-relaxed text-slate-600 dark:border-white/10 dark:text-slate-300">
                   {item.a}
                 </div>
               )}

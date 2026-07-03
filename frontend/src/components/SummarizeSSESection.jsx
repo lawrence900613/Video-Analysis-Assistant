@@ -242,7 +242,7 @@ export default function SummarizeSSESection({
   const canGenerateMindmap = Boolean(transcript) && llmReady;
 
   return (
-    <div className="no-page-scroll-anchor mt-6 overflow-hidden rounded-[2rem] border border-white/70 bg-white/80 p-4 shadow-glow backdrop-blur-xl sm:p-5">
+    <div className="no-page-scroll-anchor mt-6 overflow-hidden rounded-[2rem] border border-white/70 bg-white/80 p-4 shadow-glow backdrop-blur-xl dark:border-white/10 dark:bg-ink-900/70 sm:p-5">
       <div className="relative overflow-hidden rounded-[1.5rem] border border-slate-900/5 bg-gradient-to-br from-ink-950 via-slate-900 to-brand-700 p-5 text-white shadow-2xl shadow-ink-950/20">
         <div className="pointer-events-none absolute right-0 top-0 h-40 w-40 rounded-full bg-accent-500/25 blur-3xl" />
         <div className="pointer-events-none absolute bottom-0 left-10 h-32 w-32 rounded-full bg-neon-400/20 blur-3xl" />
@@ -298,7 +298,7 @@ export default function SummarizeSSESection({
       </div>
 
       {!llmReady && (
-        <p className="mt-4 rounded-2xl border border-slate-200/70 bg-slate-50 px-4 py-3 text-xs font-medium text-slate-500">{t("result.llm_hint")}</p>
+        <p className="mt-4 rounded-2xl border border-slate-200/70 bg-slate-50 px-4 py-3 text-xs font-medium text-slate-500 dark:border-white/10 dark:bg-ink-950/50 dark:text-slate-400">{t("result.llm_hint")}</p>
       )}
 
       {streaming && (
@@ -310,7 +310,7 @@ export default function SummarizeSSESection({
 
       {showTabs && (
         <>
-          <div className="mt-4 inline-flex max-w-full flex-wrap gap-1 rounded-2xl border border-slate-200/70 bg-white/80 p-1 shadow-sm">
+          <div className="mt-4 inline-flex max-w-full flex-wrap gap-1 rounded-2xl border border-slate-200/70 bg-white/80 p-1 shadow-sm dark:border-white/10 dark:bg-ink-950/70">
             {tabs.map((tab) => {
               const Icon = tab.icon;
               const active = activeTab === tab.id;
@@ -326,8 +326,8 @@ export default function SummarizeSSESection({
                     active
                       ? "brand-gradient text-white shadow-lg shadow-accent-200/40"
                       : disabled
-                        ? "cursor-not-allowed text-slate-400 opacity-60"
-                        : "text-slate-500 hover:bg-brand-50 hover:text-brand-700"
+                        ? "cursor-not-allowed text-slate-400 opacity-60 dark:text-slate-500"
+                        : "text-slate-500 hover:bg-brand-50 hover:text-brand-700 dark:text-slate-400 dark:hover:bg-white/10 dark:hover:text-brand-300"
                   }`}
                 >
                   <Icon className={`h-4 w-4 ${active ? "text-white" : "text-slate-400"}`} />
@@ -337,7 +337,7 @@ export default function SummarizeSSESection({
             })}
           </div>
 
-          <div className="mt-4 rounded-[1.5rem] border border-slate-200/70 bg-white/70 p-3 shadow-sm backdrop-blur sm:p-4">
+          <div className="mt-4 rounded-[1.5rem] border border-slate-200/70 bg-white/70 p-3 shadow-sm backdrop-blur dark:border-white/10 dark:bg-ink-950/50 sm:p-4">
             {activeTab === "summary" && (
               <StreamingSummaryPanel
                 summary={summary}
@@ -395,16 +395,16 @@ export default function SummarizeSSESection({
 
 function StatusAlert({ message }) {
   return (
-    <div className="mt-4 flex items-start gap-2.5 rounded-2xl border border-red-100 bg-red-50 px-4 py-3 shadow-sm">
+    <div className="mt-4 flex items-start gap-2.5 rounded-2xl border border-red-100 bg-red-50 px-4 py-3 shadow-sm dark:border-red-500/30 dark:bg-red-950/40">
       <WarnIcon className="mt-0.5 text-red-400" />
-      <p className="min-w-0 flex-1 break-words text-sm font-medium leading-relaxed text-red-600">{message}</p>
+      <p className="min-w-0 flex-1 break-words text-sm font-medium leading-relaxed text-red-600 dark:text-red-300">{message}</p>
     </div>
   );
 }
 
 function TranscriptLoadingState({ t }) {
   return (
-    <div className="flex flex-col items-center justify-center rounded-[1.25rem] bg-slate-50/80 py-12">
+    <div className="flex flex-col items-center justify-center rounded-[1.25rem] bg-slate-50/80 py-12 dark:bg-ink-950/40">
       <div className="relative mb-4 flex h-12 w-12 items-center justify-center">
         <span className="absolute inset-0 animate-ping rounded-full bg-brand-200 opacity-40" />
         <span className="relative flex h-12 w-12 items-center justify-center rounded-2xl bg-brand-50 text-brand-600">
