@@ -1,6 +1,6 @@
-"""离线单元测试：只覆盖纯函数逻辑，不访问网络 / 不下载。
+"""Offline unit tests: pure functions only, no network or downloads.
 
-运行：
+Run:
     cd backend
     pip install -r requirements.txt pytest
     pytest -q
@@ -9,7 +9,7 @@ from app import downloader as dl
 
 
 # ---------------------------------------------------------------------------
-# 时间/体积格式化
+# Duration / size formatting
 # ---------------------------------------------------------------------------
 
 def test_format_duration():
@@ -28,7 +28,7 @@ def test_human_size():
 
 
 # ---------------------------------------------------------------------------
-# VTT 解析 + SRT 生成
+# VTT parsing + SRT export
 # ---------------------------------------------------------------------------
 
 VTT_SAMPLE = """WEBVTT
@@ -46,17 +46,17 @@ Hello world
 
 def test_parse_vtt():
     cues = dl._parse_vtt(VTT_SAMPLE)
-    # 第三条与第一条文本重复，会被去重
+    # Third cue duplicates the first and is deduplicated
     assert len(cues) == 2
     assert cues[0]["start"] == "00:00:00,000"
     assert cues[0]["end"] == "00:00:02,000"
     assert cues[0]["text"] == "Hello world"
-    # HTML 标签被清除
+    # HTML tags are stripped
     assert cues[1]["text"] == "Second line"
 
 
 def test_norm_ts_short_form():
-    # MM:SS.mmm 应补全为 HH:MM:SS,mmm
+    # MM:SS.mmm should be normalized to HH:MM:SS,mmm
     assert dl._norm_ts("01:02.500") == "00:01:02,500"
     assert dl._norm_ts("00:00:01.000") == "00:00:01,000"
 
@@ -81,14 +81,14 @@ def test_parse_json3():
         '{"tStartMs":1500,"dDurationMs":1000,"segs":[{"utf8":"\\n"}]}]}'
     )
     cues = dl._parse_json3(content)
-    assert len(cues) == 1  # 第二条只有换行，被过滤
+    assert len(cues) == 1  # second event is newline-only and filtered out
     assert cues[0]["text"] == "Hi there"
     assert cues[0]["start"] == "00:00:00,000"
     assert cues[0]["end"] == "00:00:01,500"
 
 
 # ---------------------------------------------------------------------------
-# 字幕轨选择（人工优先，其次自动；按语言优先级）
+# Subtitle track selection (manual first, then auto; language priority)
 # ---------------------------------------------------------------------------
 
 def test_choose_track_prefers_manual():
@@ -121,7 +121,7 @@ def test_choose_track_none():
 
 
 # ---------------------------------------------------------------------------
-# 清晰度选项构建（带 / 不带 ffmpeg）
+# Quality option building (with / without ffmpeg)
 # ---------------------------------------------------------------------------
 
 INFO = {
@@ -138,10 +138,10 @@ def test_build_quality_options_with_ffmpeg(monkeypatch):
     opts = dl._build_quality_options(INFO)
     ids = [o["id"] for o in opts]
 
-    assert "bestvideo+bestaudio/best" in ids           # 最佳画质
-    assert "137+bestaudio/best" in ids                 # 1080 纯视频轨需合流
-    assert "18" in ids                                 # 360 progressive 直接下载
-    assert any(o.get("audio_only") for o in opts)      # 仅音频
+    assert "bestvideo+bestaudio/best" in ids           # best quality auto merge
+    assert "137+bestaudio/best" in ids                 # 1080p video-only needs merge
+    assert "18" in ids                                 # 360p progressive direct download
+    assert any(o.get("audio_only") for o in opts)      # audio-only option
 
     o1080 = next(o for o in opts if o["height"] == 1080)
     assert o1080["needs_merge"] is True
@@ -158,10 +158,10 @@ def test_build_quality_options_without_ffmpeg(monkeypatch):
     opts = dl._build_quality_options(INFO)
     ids = [o["id"] for o in opts]
 
-    assert "bestvideo+bestaudio/best" not in ids       # 无 ffmpeg 不提供自动合流
-    assert "137+bestaudio/best" not in ids             # 纯视频轨被跳过
-    assert "18" in ids                                 # progressive 仍可下载
+    assert "bestvideo+bestaudio/best" not in ids       # no auto merge without ffmpeg
+    assert "137+bestaudio/best" not in ids             # video-only tracks skipped
+    assert "18" in ids                                 # progressive still available
 
     audio = next(o for o in opts if o.get("audio_only"))
-    assert audio["id"] == "bestaudio/best"             # 降级为原生音频
+    assert audio["id"] == "bestaudio/best"             # falls back to native audio
     assert audio["ext"] == "m4a"
